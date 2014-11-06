@@ -18,7 +18,8 @@ SOURCES += \
     json.cpp \
     datamgr.cpp \
     field.cpp \
-    form.cpp
+    form.cpp \
+    formprivate.cpp
 
 HEADERS += \
     database.h \
@@ -33,7 +34,8 @@ HEADERS += \
     field.h \
     list.h \
     form.h \
-    display.h
+    display.h \
+    formprivate.h
 
 CONFIG(debug, debug|release) {
     unix|win32: LIBS += -L$$PWD/../bin/ -lhttpuploaderlibd
@@ -68,3 +70,6 @@ win32 {
 
 RESOURCES += \
     resources.qrc
+
+OTHER_FILES += \
+    json/setup.json

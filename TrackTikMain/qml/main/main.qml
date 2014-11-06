@@ -83,6 +83,28 @@ Item {
         }
     }
 
+    /*
+    // Setup screen:
+    FormBuilder {
+        id: setupScreen
+        width: parent.width
+        height: parent.height
+        visible: true//session.get("setup_done") === false
+        form: dataMgr.buildForm(":/json/setup.json")
+        states: State {
+            name: "off"
+            when: application.state === "signedIn"
+            PropertyChanges {
+                target: setupScreen
+                y: -application.height
+            }
+        }
+        Behavior on y {
+            NumberAnimation {duration: 150}
+        }
+    }
+    */
+
     // Popup mgr:
     PopupMgr {
         id: popupMgr

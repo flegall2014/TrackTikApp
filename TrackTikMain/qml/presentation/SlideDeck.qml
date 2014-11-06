@@ -1,10 +1,11 @@
 import QtQuick 2.3
 import "../main"
 
-Item {
+Rectangle {
     anchors.fill: parent
     property alias forms: deck.forms
     property alias mouseAreaEnabled: deck.mouseAreaEnabled
+    color: settings.presentationBkgColor
 
     // Small view mode:
     readonly property int viewModeSmallWidth: 750*display.scale
@@ -110,7 +111,7 @@ Item {
                     anchors.fill: parent
                     onLoaded: {
                         item.form = dataMgr.form(index)
-                        slide.title = item.form.getParameter("apicall")
+                        //slide.title = item.form.getFieldProperty("parameters", "apicall")
                     }
                 }
             }

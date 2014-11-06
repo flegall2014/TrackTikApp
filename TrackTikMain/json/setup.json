@@ -1,0 +1,21 @@
+{
+    "fields": [
+      { "type": "text",
+        "name": "field_3312",
+        "label": "Server URL",
+        "hint": "https://abc.staffr.com"
+      },
+      {
+        "type": "password",
+        "name": "field_3313",
+        "label": "Installation Code",
+        "hint": "116LC2A"
+      }
+    ],
+    "title":"Please enter your server URL and\nEnrollment installation code",
+    "details":"",
+    "apicall":"device/setup",
+    "type":"API",
+    "id":"3050",
+    "submitLabel":"INSTALL"
+}

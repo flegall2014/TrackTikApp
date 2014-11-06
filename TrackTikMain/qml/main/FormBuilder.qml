@@ -22,8 +22,8 @@ Rectangle {
     // Setup title area:
     function setupTitleArea()
     {
-        titleLabel.text = form.getParameter("title")
-        detailsLabel.text = form.getParameter("details")
+        titleLabel.text = form.getFieldProperty("parameters", "title")
+        detailsLabel.text = form.getFieldProperty("parameters", "details")
     }
 
     // Get loader source:
@@ -86,7 +86,7 @@ Rectangle {
     function onRequestOK()
     {
         // Check API call:
-        var apiCall = form.getParameter("apicall")
+        var apiCall = form.getFieldProperty("parameters", "apicall")
 
         // Sign-in? set main application state:
         if (apiCall === "signin")
@@ -124,6 +124,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         Label {
             id: titleLabel
+            visible: text.length > 0
             color: "white"
             font.bold: true
             font.family: settings.fontFamily
@@ -131,6 +132,7 @@ Rectangle {
         }
         Label {
             id: detailsLabel
+            visible: text.length > 0
             color: "white"
             font.bold: true
             font.family: settings.fontFamily

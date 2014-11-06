@@ -12,7 +12,7 @@ class Display : public QObject
 
 public:
     // Constructor:
-    explicit Display(QObject *parent) : QObject(parent), mZoom(1.), mScale(0.),
+    explicit Display(QObject *parent) : QObject(parent), mZoom(1.5), mScale(0.),
         mPixelDensity(0.), mFactor(6.), mMinZoom(0.7),
         mMaxZoom(2.0), mZoomStep(.1)
     {
@@ -20,7 +20,6 @@ public:
         mPixelDensity = logicalPixelDensity();
         setScale(mPixelDensity/mFactor*mZoom);
     }
-
 
     // Increment zoom:
     Q_INVOKABLE inline void incrZoom()

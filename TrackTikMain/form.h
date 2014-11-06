@@ -1,9 +1,8 @@
 #ifndef FORM_H
 #define FORM_H
 #include <QObject>
-#include <QMap>
-#include <QUuid>
-#include <QVariantMap>
+#include <QSharedDataPointer>
+#include "formprivate.h"
 
 class Form : public QObject
 {
@@ -14,57 +13,77 @@ public:
     explicit Form(QObject *parent = 0);
 
     // Load JSON string:
-    bool loadJSONString(const QString &jsonString);
+    inline bool loadJSONString(const QString &jsonString)
+    {
+        if (d->loadJSONString(jsonString))
+        {
+            emit nFieldsChanged();
+            return true;
+        }
+        return false;
+    }
 
     // Load JSON file:
     bool loadJSONFile(const QString &jsonFile);
 
-    // Get parameter, other than field:
-    Q_INVOKABLE QVariant getParameter(const QString &paramName) const;
-
     // Get field value:
-    Q_INVOKABLE QVariant getFieldValue(const QString &fieldId) const;
-
-    // Set field value:
-    Q_INVOKABLE bool setFieldValue(const QString &fieldId, const QVariant &value);
-
-    // Get field value label:
-    Q_INVOKABLE QVariant getFieldValueLabel(const QString &fieldId, const QString &format="yyyy/MM/dd") const;
-
-    // Get field property:
-    Q_INVOKABLE QVariant getFieldProperty(const QString &fieldId, const QString &propName) const;
-
-    // Get field property:
-    Q_INVOKABLE QVariant getFieldProperty(int fieldIndex, const QString &propName) const;
-
-    // Get field id:
-    Q_INVOKABLE QString getFieldId(int fieldIndex) const;
-
-    // API button clicked:
-    Q_INVOKABLE void sendRequest();
-
-private:
-    // Generate UID:
-    inline QString generateUID() const
+    Q_INVOKABLE inline QVariant getFieldValue(const QString &fieldId) const
     {
-        QString uid = QUuid::createUuid().toString();
-        uid.replace("{", "");
-        uid.replace("}", "");
-        return uid;
+        return d->getFieldValue(fieldId);
     }
 
+    // Set field value:
+    Q_INVOKABLE inline bool setFieldValue(const QString &fieldId, const QVariant &value)
+    {
+        if (d->setFieldValue(fieldId, value))
+        {
+            emit update(this, fieldId);
+            return true;
+        }
+        return false;
+    }
+
+    // Get field value label:
+    Q_INVOKABLE inline QVariant getFieldValueLabel(const QString &fieldId, const QString &format="yyyy/MM/dd") const
+    {
+        return d->getFieldValueLabel(fieldId, format);
+    }
+
+    // Get field property:
+    Q_INVOKABLE inline QVariant getFieldProperty(const QString &fieldId, const QString &propName) const
+    {
+        return d->getFieldProperty(fieldId, propName);
+    }
+
+    // Get field property:
+    Q_INVOKABLE inline QVariant getFieldProperty(int fieldIndex, const QString &propName) const
+    {
+        return d->getFieldProperty(fieldIndex, propName);
+    }
+
+    // Get field id:
+    Q_INVOKABLE inline QString getFieldId(int fieldIndex) const
+    {
+        return d->getFieldId(fieldIndex);
+    }
+
+    // API button clicked:
+    Q_INVOKABLE inline void sendRequest()
+    {
+        d->sendRequest();
+        emit requestOK();
+    }
+
+private:
     // Return number of fields in form:
     inline int nFields() const
     {
-        return mFields.size();
+        return d->formFields.size();
     }
 
 private:
-    // Use QList: need to preserve JSON order:
-    QList<QVariantMap> mFields;
-
-    // Parameters:
-    QVariantMap mParameters;
+    // Private data:
+    QSharedDataPointer<FormPrivate> d;
 
 signals:
     // N fields changed:
