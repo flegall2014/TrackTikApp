@@ -8,6 +8,10 @@
 #include "datamgr.h"
 #include "list.h"
 #include "display.h"
+#include <httppostfield.h>
+#include <httppostfieldvalue.h>
+#include <httppostfieldfile.h>
+#include <httpuploader.h>
 
 // Constructor:
 System::System(QObject *parent) : QObject(parent)
@@ -59,6 +63,14 @@ void System::shutdown()
 // Register types:
 void System::registerTypes()
 {
+    // Generic list:
     qmlRegisterType<List>("List", 1, 0, "List");
+
+    // From HTTP uploader lib:
+    qmlRegisterUncreatableType<HttpPostField>("HttpUp", 1, 0, "HttpPostField", "Can't touch this");
+    qmlRegisterType<HttpPostFieldValue>("HttpUp", 1, 0, "HttpPostFieldValue");
+    qmlRegisterType<HttpPostFieldFile>("HttpUp", 1, 0, "HttpPostFieldFile");
+    qmlRegisterType<HttpUploader>("HttpUp", 1, 0, "HttpUploader");
+
 }
 

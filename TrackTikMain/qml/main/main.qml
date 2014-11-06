@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Window 2.0
 import "../widgets"
 import "../presentation"
+import HttpUp 1.0
 
 // Main application:
 Item {
@@ -29,6 +30,30 @@ Item {
     function uiZoomIn() {
         display.incrZoom()
     }
+
+    /* TEST PURPOSE ONLY
+    HttpUploader {
+        id: theUploader
+
+        onUploadStateChanged: {
+            if( uploadState == HttpUploader.Done ) {
+                console.log("Upload done with status " + status, responseText);
+                console.log("Error is "  + errorString)
+            }
+        }
+
+        onProgressChanged: {
+            console.log("Upload progress = " + progress)
+        }
+
+        Component.onCompleted: {
+            theUploader.open("https://abc.staffr.com");
+            theUploader.addField("name", "Dooom !!!!");
+            theUploader.addFile("filetoUpload", ":/qml/main/main.qml");
+            theUploader.send()
+        }
+    }
+    */
 
     // Slide deck:
     SlideDeck {

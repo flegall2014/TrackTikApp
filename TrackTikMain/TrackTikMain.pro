@@ -6,6 +6,7 @@
 TEMPLATE = app
 
 QT += qml quick widgets sql script
+INCLUDEPATH += $$PWD/ ../HttpUpLoaderLib
 
 SOURCES += \
     database.cpp \
@@ -35,8 +36,10 @@ HEADERS += \
     display.h
 
 CONFIG(debug, debug|release) {
+    unix|win32: LIBS += -L$$PWD/../bin/ -lhttpuploaderlibd
     TARGET = tracktikd
 } else {
+    unix|win32: LIBS += -L$$PWD/../bin/ -lhttpuploaderlib
     TARGET = tracktik
 }
 
