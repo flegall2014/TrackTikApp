@@ -1,0 +1,20 @@
+{
+    "fields": [
+      { "type": "text",
+        "name": "field_3312",
+        "label": "Username or Email",
+        "hint": "Enter your username or xxxxxxxxxxxxxxx"
+      },
+      {
+        "type": "password",
+        "name": "field_3313",
+        "label": "Password",
+        "hint": "Type Inventory Serial #"
+      }
+    ],
+    "title": "(I AM FORM CCCCCC)",
+    "details": "(This is a Test CCCCCC)",
+    "type": "API",
+    "apicall": "setup",
+    "submitLabel": "Setup"
+}

@@ -1,0 +1,55 @@
+{
+    "fields": [
+    { "type": "text",
+        "name": "field_3304",
+        "label": "Username or Email",
+        "hint": "Enter your username or password"
+    },
+    {
+        "type": "password",
+        "name": "field_3305",
+        "label": "Password",
+        "hint": "Type Inventory Serial #"
+    },
+    {
+        "type": "list",
+        "name": "field_3306",
+        "label": "Package Count",
+        "listType": "strings",
+        "list": ["1","2","3","4","5","6","7","8","9","10"]
+    },
+    {
+        "type": "signature",
+        "name": "field_3307",
+        "label": "Signature..."
+    },
+    {   "type": "text",
+        "name": "field_3308",
+        "label": "Username or Email",
+        "hint": "Enter your username or password"
+    },
+    {
+        "type": "password",
+        "name": "field_3309",
+        "label": "Password",
+        "hint": "Type Inventory Serial XXXXXXXXXXXXXXXXXXXXXXXXXX #"
+    },
+    {
+        "type": "list",
+        "name": "field_3310",
+        "label": "Package Count",
+        "listType": "strings",
+        "list": ["1","2","3","4","5","6","7","8","9","10"]
+    },
+    {
+        "type": "signature",
+        "name": "field_3311",
+        "label": "Signature..."
+    }
+    ],
+    "title": "I AM FORM BBBBBB",
+    "details": "(This is a Test BBBBBB)",
+    "type": "API",
+    "apicall": "user/login",
+    "submitLabel": "Sign-IN"
+}

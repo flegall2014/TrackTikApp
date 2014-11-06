@@ -1,0 +1,21 @@
+{
+    "fields": [
+      { "type": "text",
+        "name": "field_3312",
+        "label": "Username or Email",
+        "hint": "Username / Email"
+      },
+      {
+        "type": "password",
+        "name": "field_3313",
+        "label": "Password",
+        "hint": "Password"
+      }
+    ],
+    "title":"Please Sign-In",
+    "details":"Sign-In to continue",
+    "apicall":"signin",
+    "type":"API",
+    "id":"3050",
+    "submitLabel":"Sign-In"
+}
