@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtQuick.Window 2.0
 import "../widgets"
 import "../presentation"
+import HttpUp 1.0
 
 // Main application:
 Item {
@@ -71,6 +72,7 @@ Item {
         width: parent.width
         height: parent.height
         form: dataMgr.buildForm(":/json/setup.json")
+        property string serverUrl: ""
         states: State {
             name: "off"
             when: setupDone
@@ -82,6 +84,91 @@ Item {
         }
         Behavior on y {
             NumberAnimation {duration: 150}
+        }
+
+        // Upload state changed:
+        function onUpdloadStateChanged(uploadState, status, response)
+        {
+            // HTTP loader done:
+            if (uploadState === HttpUploader.Done)
+            {
+                // Status OK:
+                if (status === HttpUploader.OK)
+                {
+                    // Parse response:
+                    var jsonObject = JSON.parse(response)
+
+                    // Got success:
+                    if (jsonObject.name === "success")
+                    {
+                        // Loop through the response.data
+                        for (var i=0; i<jsonObject.data.length; i++)
+                        {
+                            var item = jsonObject.data[i]
+                            var name = item["name"]
+                            var value = item["value"]
+                            session.set(name, value)
+                        }
+
+                        // Update setting:
+                        //setting.set("setup_done", 1)
+                        //setting.set("server_url", serverUrl);
+                    }
+                }
+            }
+        }
+
+        // Progress changed:
+        function onProgressChanged(progress)
+        {
+            console.log(progress)
+        }
+
+        // Network error:
+        function onNetworkError(error)
+        {
+            console.log(error)
+        }
+
+        // Send request (overloaded):
+        function sendRequest()
+        {
+            // Get url:
+            serverUrl = form.getFieldValue("url")
+
+            // Get code:
+            var code = form.getFieldValue("code")
+
+            // Get api code:
+            var apiCall = form.getFieldProperty("parameters", "apicall")
+
+            // Get type:
+            var type = form.getFieldProperty("parameters", "type")
+
+            // Full URL:
+            var fullUrl = serverUrl+"/"+type+"/"+apiCall
+
+            // Open:
+            uploader.open(fullUrl);
+            for (var i=0; i<form.nFields; i++)
+            {
+                // Get field name:
+                var name = form.getFieldProperty(i, "name")
+                if (name === "parameters")
+                    continue
+
+                // Get field value:
+                var value = form.getFieldValue(i)
+
+                // Add field:
+                uploader.addField(name, value)
+            }
+
+            // Add field:
+            uploader.addField("code", code);
+
+            // Send:
+            uploader.send()
         }
     }
 

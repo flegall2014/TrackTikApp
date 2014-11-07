@@ -72,4 +72,5 @@ RESOURCES += \
     resources.qrc
 
 OTHER_FILES += \
-    json/setup.json
+    json/setup.json \
+    JS/Parser.js

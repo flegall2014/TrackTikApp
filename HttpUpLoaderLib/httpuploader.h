@@ -15,6 +15,7 @@ class HTTPUPLOADERLIBSHARED_EXPORT HttpUploader : public QObject, public QQmlPar
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
     Q_ENUMS(State)
+    Q_ENUMS(Status)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
     Q_PROPERTY(QQmlListProperty<HttpPostField> postFields READ postFields)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
@@ -22,7 +23,7 @@ class HTTPUPLOADERLIBSHARED_EXPORT HttpUploader : public QObject, public QQmlPar
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString errorString READ errorString)
     Q_PROPERTY(QString responseText READ responseText)
-    Q_PROPERTY(int networkError READ networkError)
+    Q_PROPERTY(int networkError READ networkError NOTIFY networkErrorChanged)
     Q_CLASSINFO("DefaultProperty", "postFields")
 
 public:

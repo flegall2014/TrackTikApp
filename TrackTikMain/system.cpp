@@ -21,6 +21,12 @@ System::System(QObject *parent) : QObject(parent)
 
     // Display:
     mDisplay = new Display(this);
+
+    // Session:
+    mSession = new Session(this);
+
+    // Setting:
+    mSetting = new Setting(this);
 }
 
 // Startup:
@@ -34,10 +40,8 @@ bool System::startup()
     registerTypes();
 
     // Make session, setting & dataMgr visible everywhere in QML:
-    Session session;
-    Setting setting;
-    mView.rootContext()->setContextProperty("session", &session);
-    mView.rootContext()->setContextProperty("setting", &setting);
+    mView.rootContext()->setContextProperty("session", mSession);
+    mView.rootContext()->setContextProperty("setting", mSetting);
     mView.rootContext()->setContextProperty("dataMgr", mDataMgr);
     mView.rootContext()->setContextProperty("display", mDisplay);
 

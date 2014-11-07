@@ -3,7 +3,7 @@
 #include "utils.h"
 
 // Constructor:
-Setting::Setting() : mType("setting")
+Setting::Setting(QObject *parent) : QObject(parent), mType("setting")
 {
 
 }

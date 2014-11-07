@@ -8,7 +8,7 @@ class Setting: public QObject {
 
 public:
     // Constructor:
-    Setting();
+    Setting(QObject *parent=0);
 
     // Destructor:
     virtual ~Setting();

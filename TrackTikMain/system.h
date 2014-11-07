@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QQuickView>
 #include "iservice.h"
+class Session;
+class Setting;
 class DataMgr;
 class Display;
 
@@ -40,6 +42,12 @@ private:
 
     // Display:
     Display *mDisplay;
+
+    // Session:
+    Session *mSession;
+
+    // Setting:
+    Setting *mSetting;
 };
 
 #endif // SYSTEM_H

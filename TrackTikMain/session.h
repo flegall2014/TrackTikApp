@@ -8,7 +8,7 @@ class Session: public Setting {
 
 public:
     // Constructor:
-    Session();
+    Session(QObject *parent=0);
 
     // Destructor:
     virtual ~Session();

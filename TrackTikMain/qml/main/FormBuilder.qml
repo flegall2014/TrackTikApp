@@ -9,29 +9,46 @@ Rectangle {
 
     // Form (from DataMgr):
     property variant form
+    property variant uploader: undefined
     enabled: (popupMgr.status === Loader.Null)
+
+    // Upload state changed:
+    function onUpdloadStateChanged(uploadState, status, responseText)
+    {
+        if (uploadState === HttpUploader.Done)
+        {
+            console.log(status, responseText)
+            console.log("Error is "  + errorString)
+        }
+    }
+
+    // Progress changed:
+    function onProgressChanged(progress)
+    {
+        console.log(progress)
+    }
+
+    // Network error:
+    function onNetworkError(error)
+    {
+        console.log(error)
+    }
 
     // HTPP uploader:
     HttpUploader {
         id: uploader
 
         // Upload state changed:
-        onUploadStateChanged: {
-            if (uploadState == HttpUploader.Done) {
-                console.log("Upload done with status " + status, responseText);
-                console.log("Error is "  + errorString)
-            }
-        }
+        onUploadStateChanged: onUpdloadStateChanged(uploadState, status, responseText)
 
         // Progress changed:
-        onProgressChanged: {
-            console.log("Upload progress = " + progress)
-        }
+        onProgressChanged: onProgressChanged(progress)
 
         // Monitor network errors:
-        onNetworkErrorChanged: {
-            console.log(networkError)
-        }
+        onNetworkErrorChanged: onNetworkError(networkError)
+
+        // Set uploader:
+        Component.onCompleted: container.uploader = uploader
     }
 
     // Form  changed:

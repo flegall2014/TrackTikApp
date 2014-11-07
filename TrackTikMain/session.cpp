@@ -3,7 +3,7 @@
 #include "utils.h"
 
 // Constructor:
-Session::Session()
+Session::Session(QObject *parent) : Setting(parent)
 {
     mType = "session";
 }
