@@ -15,7 +15,8 @@ HttpUploader::HttpUploader(QObject *parent) :
     mState(Unsent),
     mPendingReply(NULL),
     mUploadDevice(NULL),
-    mStatus(0)
+    mStatus(None),
+    mNetworkError(0)
 {
     mComplete = false;
 }
@@ -156,8 +157,14 @@ QString HttpUploader::responseText() const
     return QString::fromUtf8(mResponse.constData(), mResponse.size());
 }
 
+// Network error:
+int HttpUploader::networkError() const
+{
+    return mNetworkError;
+}
+
 // Status:
-int HttpUploader::status() const
+HttpUploader::Status HttpUploader::status() const
 {
     return mStatus;
 }
@@ -173,7 +180,7 @@ void HttpUploader::clear()
                 delete mPostFields[i];
         mPostFields.clear();
         mProgress = 0;
-        mStatus = 0;
+        mStatus = None;
         mErrorString.clear();
         mResponse.clear();
         emit stateChanged();
@@ -208,7 +215,7 @@ void HttpUploader::send()
                 if(!field->validateField()) {
                     mState = Done;
                     mErrorString = tr("Failed to validate POST fields");
-                    mStatus = -1;
+                    mStatus = Error;
                     emit stateChanged();
                     emit statusChanged();
                     return;
@@ -231,6 +238,7 @@ void HttpUploader::send()
 
         connect(mPendingReply, SIGNAL(finished()), SLOT(reply_finished()));
         connect(mPendingReply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(uploadProgress(qint64,qint64)));
+        connect(mPendingReply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onNetworkError(QNetworkReply::NetworkError)));
 
         emit stateChanged();
         emit progressChanged();
@@ -251,7 +259,7 @@ void HttpUploader::sendFile(const QString& fileName)
             mErrorString = mUploadDevice->errorString();
             delete mUploadDevice;
             mUploadDevice = NULL;
-            mStatus = -1;
+            mStatus = Error;
             emit stateChanged();
             emit statusChanged();
             return;
@@ -263,6 +271,7 @@ void HttpUploader::sendFile(const QString& fileName)
 
         connect(mPendingReply, SIGNAL(finished()), SLOT(reply_finished()));
         connect(mPendingReply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(uploadProgress(qint64,qint64)));
+        connect(mPendingReply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onNetworkError(QNetworkReply::NetworkError)));
 
         emit stateChanged();
         emit progressChanged();
@@ -337,7 +346,7 @@ void HttpUploader::reply_finished()
         mBoundaryString.clear();
         mErrorString = mPendingReply->errorString();
         mPendingReply = NULL;
-        mStatus = 0;
+        mStatus = None;
         emit progressChanged();
         emit stateChanged();
         emit statusChanged();
@@ -354,7 +363,7 @@ void HttpUploader::reply_finished()
     mState = Done;
     mErrorString.clear();
     mPendingReply = NULL;
-    mStatus = 200;
+    mStatus = OK;
 
     emit progressChanged();
     emit statusChanged();
@@ -376,4 +385,11 @@ void HttpUploader::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
             emit progressChanged();
         }
     }
+}
+
+// Network error:
+void HttpUploader::onNetworkError(const QNetworkReply::NetworkError &error)
+{
+    mNetworkError = (int)error;
+    emit networkErrorChanged();
 }

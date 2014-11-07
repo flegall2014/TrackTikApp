@@ -5,6 +5,7 @@
 #include <QQmlListProperty>
 #include "httppostfield.h"
 #include <QUrl>
+#include <QNetworkReply>
 #include "httpuploaderlib_global.h"
 
 // The HTTP uploader objects. It works similar to the XMLHttpRequest object, but allows
@@ -18,9 +19,10 @@ class HTTPUPLOADERLIBSHARED_EXPORT HttpUploader : public QObject, public QQmlPar
     Q_PROPERTY(QQmlListProperty<HttpPostField> postFields READ postFields)
     Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
     Q_PROPERTY(State uploadState READ state NOTIFY stateChanged)
-    Q_PROPERTY(int status READ status NOTIFY statusChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString errorString READ errorString)
     Q_PROPERTY(QString responseText READ responseText)
+    Q_PROPERTY(int networkError READ networkError)
     Q_CLASSINFO("DefaultProperty", "postFields")
 
 public:
@@ -31,6 +33,13 @@ public:
         Loading,    //< Data is being sent
         Aborting,   //< State entered when upload is being aborted
         Done        //< Upload finished (you need to examine status property)
+    };
+
+    // Status:
+    enum Status {
+        None,
+        Error,
+        OK
     };
 
     // Constructor:
@@ -61,7 +70,10 @@ public:
     QString responseText() const;
 
     // Status:
-    int status() const;
+    HttpUploader::Status status() const;
+
+    // Return network error:
+    int networkError() const;
 
 public slots:
     // Reset object to the initial state (close files/clear fields/etc.)
@@ -90,6 +102,7 @@ signals:
     void progressChanged();
     void stateChanged();
     void statusChanged();
+    void networkErrorChanged();
 
 private:
     // Append:
@@ -112,6 +125,7 @@ private:
 private slots:
     void reply_finished();
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
+    void onNetworkError(const QNetworkReply::NetworkError &error);
 
 private:
     bool mComplete;
@@ -124,7 +138,8 @@ private:
     QString mErrorString;
     QByteArray mBoundaryString;
     QIODevice * mUploadDevice;
-    int mStatus;
+    Status mStatus;
     QByteArray mResponse;
+    int mNetworkError;
     friend class HttpUploaderDevice;
 };

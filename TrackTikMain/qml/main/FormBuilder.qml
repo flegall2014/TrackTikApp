@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
+import HttpUp 1.0
 
 Rectangle {
     id: container
@@ -9,6 +10,29 @@ Rectangle {
     // Form (from DataMgr):
     property variant form
     enabled: (popupMgr.status === Loader.Null)
+
+    // HTPP uploader:
+    HttpUploader {
+        id: uploader
+
+        // Upload state changed:
+        onUploadStateChanged: {
+            if (uploadState == HttpUploader.Done) {
+                console.log("Upload done with status " + status, responseText);
+                console.log("Error is "  + errorString)
+            }
+        }
+
+        // Progress changed:
+        onProgressChanged: {
+            console.log("Upload progress = " + progress)
+        }
+
+        // Monitor network errors:
+        onNetworkErrorChanged: {
+            console.log(networkError)
+        }
+    }
 
     // Form  changed:
     onFormChanged: {
@@ -30,7 +54,7 @@ Rectangle {
     function getSource(index)
     {
         // Get type:
-        var type = form.getFieldProperty(index, "type")
+        var type = form.getFieldProperty(index, "type").toLowerCase()
         var listType = "strings"
         if (type === "list")
             listType = form.getFieldProperty(index, "listType")
@@ -64,7 +88,7 @@ Rectangle {
             return "../widgets/SectionWidget.qml"
         if (type === "list")
             return "../widgets/ComboWidget.qml"
-        if (type === "API")
+        if (type === "api")
             return "../widgets/SubmitButtonWidget.qml"
 
         // Default:
@@ -78,8 +102,41 @@ Rectangle {
     // API button clicked:
     function sendRequest()
     {
-        // Notify form (C++):
-        form.sendRequest()
+        // Get url:
+        var url = form.getFieldValue("url")
+
+        // Get api code:
+        var apiCall = form.getFieldProperty("parameters", "apicall")
+
+        // Get type:
+        var type = form.getFieldProperty("parameters", "type")
+
+        // Get code:
+        var code = "1124L078" //form.getFieldValue("code")
+
+        // Full URL:
+        var fullUrl = url+"/"+type+"/"+apiCall
+
+        // Open:
+        uploader.open(fullUrl);
+
+        for (var i=0; i<form.nFields; i++)
+        {
+            // Get field name:
+            var name = form.getFieldProperty(i, "name")
+
+            // Get field value:
+            var value = form.getFieldValue(i)
+
+            // Add field:
+            uploader.addField(name, value)
+        }
+
+        // Add field:
+        uploader.addField("code", code);
+
+        // Send:
+        uploader.send()
     }
 
     // Request OK:
@@ -177,8 +234,8 @@ Rectangle {
 
                         // Is this item associated with an API call?
                         // Check API call:
-                        var type = form.getFieldProperty(index, "type")
-                        if (type === "API")
+                        var type = form.getFieldProperty(index, "type").toLowerCase()
+                        if (type === "api")
                         {
                             item.clicked.connect(sendRequest)
                             form.requestOK.connect(onRequestOK)

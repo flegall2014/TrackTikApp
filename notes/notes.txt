@@ -1,0 +1,54 @@
+bkg gris clair
+en mode mobile (pas de menu), pas marges autour du contenu, sinon marges
+Tractik icon a supprimer, ne garder que celui du dessus
+
+server URL
+installation code: code enrollment = voici la licence
+
+
+
+https://abc.staffr.com/api/device/setup?code=116LC2A (abc.*** = server URL)
+start screen = server url
+
+Envoi de requete
+https://code.google.com/p/qml-http-uploader/
+-> envoi les requetes
+-> TO DO: get response from server
+-> si error: msg d'erreur
+
+setup success -> sauvegarder le server URL (sauver dans le setting object)
+toutes les requetes ulterieures -> utilise le server URL du setup
+
+Device Unique ID avec Qt? a verifier (identifier la machine depuis laquelle le client d'est connecte)
+Si iPhone/Android, recuperer phone number?
+
+
+device_local_identifier=xxxxxxxx
+
+728L922 -> dans le formulaire directement
+
+ form.open("http://“+URL+”/upload.php");
+ form.addField(“code”, “728L922”);
+ form.addField("device_local_identifier", getDeviceLocationIdentifier());
+ form.send()..
+
+
+map, photo -> addFile
+addToForm -> addField ou addFile (addField par default)
+
+creer CAPiUplader 
+
+formulaire de setup
+connection au serveur -> recuperer aussi des listes
+
+
+URL du setup: dans le json correspondant
+"type": "text"
+"url": "https://abc.staffr.com"
+
+"abc.staffr.com": entre par utilisateur dans setup screen
+
+
+
+
+

@@ -3,11 +3,16 @@ import QtQuick.Controls 1.2
 import QtQuick.Window 2.0
 import "../widgets"
 import "../presentation"
-import HttpUp 1.0
 
 // Main application:
 Item {
     id: application
+
+    // Setup done?
+    property bool setupDone: false
+
+    // User signed in?
+    property bool userSignedIn: false
 
     // States:
     states: [
@@ -31,30 +36,6 @@ Item {
         display.incrZoom()
     }
 
-    /* TEST PURPOSE ONLY
-    HttpUploader {
-        id: theUploader
-
-        onUploadStateChanged: {
-            if( uploadState == HttpUploader.Done ) {
-                console.log("Upload done with status " + status, responseText);
-                console.log("Error is "  + errorString)
-            }
-        }
-
-        onProgressChanged: {
-            console.log("Upload progress = " + progress)
-        }
-
-        Component.onCompleted: {
-            theUploader.open("https://abc.staffr.com");
-            theUploader.addField("name", "Dooom !!!!");
-            theUploader.addFile("filetoUpload", ":/qml/main/main.qml");
-            theUploader.send()
-        }
-    }
-    */
-
     // Slide deck:
     SlideDeck {
         id: slideDeck
@@ -72,9 +53,10 @@ Item {
         form: dataMgr.buildForm(":/json/signin.json")
         states: State {
             name: "off"
-            when: application.state === "signedIn"
+            when: setupDone && userSignedIn
             PropertyChanges {
                 target: signInScreen
+                visible: false
                 y: -application.height
             }
         }
@@ -83,19 +65,18 @@ Item {
         }
     }
 
-    /*
     // Setup screen:
     FormBuilder {
         id: setupScreen
         width: parent.width
         height: parent.height
-        visible: true//session.get("setup_done") === false
         form: dataMgr.buildForm(":/json/setup.json")
         states: State {
             name: "off"
-            when: application.state === "signedIn"
+            when: setupDone
             PropertyChanges {
                 target: setupScreen
+                visible: false
                 y: -application.height
             }
         }
@@ -103,10 +84,14 @@ Item {
             NumberAnimation {duration: 150}
         }
     }
-    */
 
     // Popup mgr:
     PopupMgr {
         id: popupMgr
+    }
+
+    Component.onCompleted: {
+        var test = session.get("setup_done")
+        setupDone = test && (test === true)
     }
 }
