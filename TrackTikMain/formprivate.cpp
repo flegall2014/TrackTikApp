@@ -148,10 +148,3 @@ QVariant FormPrivate::getFieldValueLabel(const QString &fieldId, const QString &
 
     return getFieldValue(fieldId);
 }
-
-// API button clicked:
-void FormPrivate::sendRequest()
-{
-    // Get API call:
-    QString apiCall = getFieldProperty("parameters", "apicall").toString();
-}

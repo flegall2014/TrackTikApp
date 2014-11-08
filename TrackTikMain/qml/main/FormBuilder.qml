@@ -2,6 +2,8 @@ import QtQuick 2.3
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import HttpUp 1.0
+import CAPIHandler 1.0
+import CAPIConnection 1.0
 
 Rectangle {
     id: container
@@ -9,46 +11,42 @@ Rectangle {
 
     // Form (from DataMgr):
     property variant form
-    property variant uploader: undefined
     enabled: (popupMgr.status === Loader.Null)
 
-    // Upload state changed:
-    function onUpdloadStateChanged(uploadState, status, responseText)
-    {
-        if (uploadState === HttpUploader.Done)
-        {
-            console.log(status, responseText)
-            console.log("Error is "  + errorString)
+    // Default CAPI handler, can be overriden:
+    property var capiHandler: CAPIHandler {
+        id: capiHandler
+
+        // Default impl:
+        onSuccessChanged: {
+            console.log("DEFAULT SUCCESS = ", success)
+        }
+
+        // Default impl:
+        onNetworkErrorChanged: {
+            console.log("DEFAULT NETWORK ERROR = ", networkError)
+        }
+
+        // Default impl:
+        onProgressChanged: {
+            console.log("DEFAULT PROGRESS = ", progress)
+        }
+
+        // Default impl:
+        onApiErrorChanged: {
+            console.log("DEFAULT API ERROR = ", apiError)
+        }
+
+        // Default impl:
+        onResponseChanged: {
+            console.log("DEFAULT RESPONSE = ", response)
         }
     }
 
-    // Progress changed:
-    function onProgressChanged(progress)
-    {
-        console.log(progress)
-    }
-
-    // Network error:
-    function onNetworkError(error)
-    {
-        console.log(error)
-    }
-
-    // HTPP uploader:
-    HttpUploader {
-        id: uploader
-
-        // Upload state changed:
-        onUploadStateChanged: onUpdloadStateChanged(uploadState, status, responseText)
-
-        // Progress changed:
-        onProgressChanged: onProgressChanged(progress)
-
-        // Monitor network errors:
-        onNetworkErrorChanged: onNetworkError(networkError)
-
-        // Set uploader:
-        Component.onCompleted: container.uploader = uploader
+    // CAPI connection:
+    property var capiConnection: CAPIConnection {
+        id: capiConnection
+        handler: capiHandler
     }
 
     // Form  changed:
@@ -112,82 +110,11 @@ Rectangle {
         return "../widgets/ToDoWidget.qml"
     }
 
-    //
-    // Form callbacks:
-    //
-
-    // API button clicked:
-    function sendRequest()
+    // Default doAPICall:
+    function doAPICall()
     {
-        // Get url:
-        var url = form.getFieldValue("url")
-
-        // Get api code:
-        var apiCall = form.getFieldProperty("parameters", "apicall")
-
-        // Get type:
-        var type = form.getFieldProperty("parameters", "type")
-
-        // Get code:
-        var code = "1124L078" //form.getFieldValue("code")
-
-        // Full URL:
-        var fullUrl = url+"/"+type+"/"+apiCall
-
-        // Open:
-        uploader.open(fullUrl);
-
-        for (var i=0; i<form.nFields; i++)
-        {
-            // Get field name:
-            var name = form.getFieldProperty(i, "name")
-
-            // Get field value:
-            var value = form.getFieldValue(i)
-
-            // Add field:
-            uploader.addField(name, value)
-        }
-
-        // Add field:
-        uploader.addField("code", code);
-
-        // Send:
-        uploader.send()
+        var x = 0
     }
-
-    // Request OK:
-    function onRequestOK()
-    {
-        // Check API call:
-        var apiCall = form.getFieldProperty("parameters", "apicall")
-
-        // Sign-in? set main application state:
-        if (apiCall === "signin")
-            application.state = "signedIn"
-    }
-
-    // Request error:
-    function onRequestError()
-    {
-
-    }
-
-    /*
-    // Logo:
-    Image {
-        id: logoArea
-        cache: true
-        asynchronous: true
-        source: "http://tracktik.com/images/tracktik_main_logo.png"
-        opacity: 0.8
-        width: 90*display.scale
-        height: 24*display.scale
-        anchors.top: parent.top
-        anchors.topMargin: 4*display.scale
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-    */
 
     // Title area:
     Column {
@@ -253,11 +180,7 @@ Rectangle {
                         // Check API call:
                         var type = form.getFieldProperty(index, "type").toLowerCase()
                         if (type === "api")
-                        {
-                            item.clicked.connect(sendRequest)
-                            form.requestOK.connect(onRequestOK)
-                            form.requestError.connect(onRequestError)
-                        }
+                            item.clicked.connect(doAPICall)
                     }
                 }
             }

@@ -13,6 +13,12 @@ public:
     // Return an instance of TrackTik:
     static TrackTik *instance();
 
+    // Get system:
+    inline System *getSystem() const
+    {
+        return mSystem;
+    }
+
     // Startup:
     virtual bool startup();
 

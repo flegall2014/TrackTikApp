@@ -18,7 +18,7 @@ HttpUploader::HttpUploader(QObject *parent) :
     mStatus(None),
     mNetworkError(0)
 {
-    mComplete = false;
+    mNetworkAccessManager = new QNetworkAccessManager(this);
 }
 
 // Destructor:
@@ -47,90 +47,6 @@ void HttpUploader::setUrl(const QUrl& url)
             emit urlChanged();
         }
     }
-}
-
-// Post fields:
-QQmlListProperty<HttpPostField> HttpUploader::postFields()
-{
-    return QQmlListProperty<HttpPostField>(this,
-                                                   0,
-                                                   &HttpUploader::AppendFunction,
-                                                   &HttpUploader::CountFunction,
-                                                   &HttpUploader::AtFunction,
-                                                   &HttpUploader::ClearFunction);
-}
-
-// Append:
-void HttpUploader::AppendFunction(QQmlListProperty<HttpPostField> * o, HttpPostField* field)
-{
-    HttpUploader * self = qobject_cast<HttpUploader *>(o->object);
-    if(self) {
-        if( self->mState == Loading ) {
-            qWarning("HttpUploader: Invalid state when trying to append field");
-        } else {
-            self->mPostFields.append(field);
-        }
-    }
-}
-
-// Count:
-int HttpUploader::CountFunction(QQmlListProperty<HttpPostField> * o)
-{
-    HttpUploader * self = qobject_cast<HttpUploader *>(o->object);
-    if(self)
-        return self->mPostFields.count();
-    return 0;
-}
-
-// At:
-HttpPostField * HttpUploader::AtFunction(QQmlListProperty<HttpPostField> * o, int index)
-{
-    HttpUploader * self = qobject_cast<HttpUploader *>(o->object);
-    if(self)
-    {
-        return self->mPostFields.value(index);
-    }
-
-    return NULL;
-}
-
-// Clear:
-void HttpUploader::ClearFunction(QQmlListProperty<HttpPostField> * o)
-{
-    HttpUploader * self = qobject_cast<HttpUploader *>(o->object);
-    if(self)
-    {
-        if( self->mState == Loading ) {
-            qWarning("HttpUploader: Invalid state when trying to clear fields");
-        } else {
-            for(int i = 0 ; i < self->mPostFields.size() ; ++i)
-                if(self->mPostFields[i] && !self->mPostFields[i]->mInstancedFromQml)
-                    delete self->mPostFields[i];
-            self->mPostFields.clear();
-        }
-    }
-}
-
-// Class begin:
-void HttpUploader::classBegin()
-{
-    // Get active engine:
-    QQmlEngine *engine = QQmlEngine::contextForObject(this)->engine();
-
-    if (QQmlNetworkAccessManagerFactory *factory = engine->networkAccessManagerFactory())
-    {
-        mNetworkAccessManager = factory->create(this);
-    }
-    else
-    {
-        mNetworkAccessManager = engine->networkAccessManager();
-    }
-}
-
-// Component complete:
-void HttpUploader::componentComplete()
-{
-    mComplete = true;
 }
 
 // Progress:
@@ -183,7 +99,7 @@ void HttpUploader::clear()
         mStatus = None;
         mErrorString.clear();
         mResponse.clear();
-        emit stateChanged();
+        //emit stateChanged();
         emit urlChanged();
         emit progressChanged();
         emit statusChanged();
@@ -193,14 +109,14 @@ void HttpUploader::clear()
 // Open:
 void HttpUploader::open(const QUrl& url)
 {
-    if( mState == Unsent )
+    //if( mState == Unsent )
     {
         setUrl(url);
         mState = Opened;
-        emit stateChanged();
-    } else {
-        qWarning() << "Invalid state of uploader" << mState << "to open";
-    }
+        //emit stateChanged();
+    } //else {
+      //  qWarning() << "Invalid state of uploader" << mState << "to open";
+    //}
 }
 
 // Send:
@@ -216,7 +132,7 @@ void HttpUploader::send()
                     mState = Done;
                     mErrorString = tr("Failed to validate POST fields");
                     mStatus = Error;
-                    emit stateChanged();
+                    //emit stateChanged();
                     emit statusChanged();
                     return;
                 }
@@ -236,11 +152,11 @@ void HttpUploader::send()
         mState = Loading;
         mProgress = 0;
 
-        connect(mPendingReply, SIGNAL(finished()), SLOT(reply_finished()));
-        connect(mPendingReply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(uploadProgress(qint64,qint64)));
-        connect(mPendingReply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onNetworkError(QNetworkReply::NetworkError)));
+        connect(mPendingReply, SIGNAL(finished()), SLOT(replyFinished()), Qt::UniqueConnection);
+        connect(mPendingReply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(uploadProgress(qint64,qint64)), Qt::UniqueConnection);
+        connect(mPendingReply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onNetworkError(QNetworkReply::NetworkError)), Qt::UniqueConnection);
 
-        emit stateChanged();
+        //emit stateChanged();
         emit progressChanged();
     } else {
         qWarning() << "Invalid state of uploader" << mState << "to send";
@@ -260,7 +176,7 @@ void HttpUploader::sendFile(const QString& fileName)
             delete mUploadDevice;
             mUploadDevice = NULL;
             mStatus = Error;
-            emit stateChanged();
+            //emit stateChanged();
             emit statusChanged();
             return;
         }
@@ -269,11 +185,11 @@ void HttpUploader::sendFile(const QString& fileName)
         mState = Loading;
         mProgress = 0;
 
-        connect(mPendingReply, SIGNAL(finished()), SLOT(reply_finished()));
-        connect(mPendingReply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(uploadProgress(qint64,qint64)));
-        connect(mPendingReply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onNetworkError(QNetworkReply::NetworkError)));
+        connect(mPendingReply, SIGNAL(finished()), SLOT(replyFinished()), Qt::UniqueConnection);
+        connect(mPendingReply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(uploadProgress(qint64,qint64)), Qt::UniqueConnection);
+        connect(mPendingReply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(onNetworkError(QNetworkReply::NetworkError)), Qt::UniqueConnection);
 
-        emit stateChanged();
+        //emit stateChanged();
         emit progressChanged();
     } else {
         qWarning() << "Invalid state of uploader" << mState << "to send";
@@ -285,7 +201,7 @@ void HttpUploader::abort()
 {
     if( mState == Loading ) {
         mState = Aborting;
-        emit stateChanged();
+        //emit stateChanged();
         mPendingReply->abort();
     }
 }
@@ -312,15 +228,11 @@ void HttpUploader::addFile(const QString& fieldName, const QString& fileName, co
 }
 
 // Reply finished:
-void HttpUploader::reply_finished()
+void HttpUploader::replyFinished()
 {
     mPendingReply->deleteLater();
 
     if( mPendingReply->error() == QNetworkReply::OperationCanceledError ) {
-#ifdef QT_DEBUG
-        qDebug() << "HttpUploader: Upload aborted";
-#endif
-
         mPendingReply = NULL;
         delete mUploadDevice;
         mUploadDevice = NULL;
@@ -335,10 +247,6 @@ void HttpUploader::reply_finished()
     mResponse = mPendingReply->readAll();
 
     if( mPendingReply->error() != QNetworkReply::NoError ) {
-#ifdef QT_DEBUG
-        qDebug() << "HttpUploader: Network error" << mPendingReply->error();
-#endif
-
         delete mUploadDevice;
         mUploadDevice = NULL;
         mProgress = 0;
@@ -352,10 +260,6 @@ void HttpUploader::reply_finished()
         emit statusChanged();
         return;
     }
-
-#ifdef QT_DEBUG
-    qDebug() << "HttpUploader: Upload finished";
-#endif
 
     delete mUploadDevice;
     mUploadDevice = NULL;
@@ -379,9 +283,6 @@ void HttpUploader::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
         if(!qFuzzyCompare(progress, mProgress))
         {
             mProgress = progress;
-#ifdef QT_DEBUG
-            qDebug() << "HttpUploader: Progress is" << mProgress;
-#endif
             emit progressChanged();
         }
     }

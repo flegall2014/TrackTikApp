@@ -8,10 +8,11 @@
 #include "datamgr.h"
 #include "list.h"
 #include "display.h"
-#include <httppostfield.h>
 #include <httppostfieldvalue.h>
 #include <httppostfieldfile.h>
 #include <httpuploader.h>
+#include "capiconnection.h"
+#include "capihandler.h"
 
 // Constructor:
 System::System(QObject *parent) : QObject(parent)
@@ -75,6 +76,7 @@ void System::registerTypes()
     qmlRegisterType<HttpPostFieldValue>("HttpUp", 1, 0, "HttpPostFieldValue");
     qmlRegisterType<HttpPostFieldFile>("HttpUp", 1, 0, "HttpPostFieldFile");
     qmlRegisterType<HttpUploader>("HttpUp", 1, 0, "HttpUploader");
-
+    qmlRegisterType<CAPIConnection>("CAPIConnection", 1, 0, "CAPIConnection");
+    qmlRegisterType<CAPIHandler>("CAPIHandler", 1, 0, "CAPIHandler");
 }
 

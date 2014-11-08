@@ -1,5 +1,4 @@
 #include <QObject>
-#include <QQmlParserStatus>
 #include <QNetworkAccessManager>
 #include <QPointer>
 #include <QQmlListProperty>
@@ -10,21 +9,9 @@
 
 // The HTTP uploader objects. It works similar to the XMLHttpRequest object, but allows
 // uploading of the HTML form-like data.
-class HTTPUPLOADERLIBSHARED_EXPORT HttpUploader : public QObject, public QQmlParserStatus
+class HTTPUPLOADERLIBSHARED_EXPORT HttpUploader : public QObject
 {
     Q_OBJECT
-    Q_INTERFACES(QQmlParserStatus)
-    Q_ENUMS(State)
-    Q_ENUMS(Status)
-    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    Q_PROPERTY(QQmlListProperty<HttpPostField> postFields READ postFields)
-    Q_PROPERTY(qreal progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(State uploadState READ state NOTIFY stateChanged)
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
-    Q_PROPERTY(QString errorString READ errorString)
-    Q_PROPERTY(QString responseText READ responseText)
-    Q_PROPERTY(int networkError READ networkError NOTIFY networkErrorChanged)
-    Q_CLASSINFO("DefaultProperty", "postFields")
 
 public:
     // State of the uploader object (compatible with XMLHttpRequest state)
@@ -105,31 +92,12 @@ signals:
     void statusChanged();
     void networkErrorChanged();
 
-private:
-    // Append:
-    static void AppendFunction(QQmlListProperty<HttpPostField> *, HttpPostField*);
-
-    // Count:
-    static int CountFunction(QQmlListProperty<HttpPostField> *);
-
-    // At:
-    static HttpPostField *AtFunction(QQmlListProperty<HttpPostField> *, int);
-
-    // Clear:
-    static void ClearFunction(QQmlListProperty<HttpPostField> *);
-
-private:
-    // QQmlParserStatus:
-    virtual void classBegin();
-    virtual void componentComplete();
-
 private slots:
-    void reply_finished();
+    void replyFinished();
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
     void onNetworkError(const QNetworkReply::NetworkError &error);
 
 private:
-    bool mComplete;
     QNetworkAccessManager *mNetworkAccessManager;
     QUrl mUrl;
     QList< QPointer<HttpPostField> > mPostFields;
@@ -138,7 +106,7 @@ private:
     QPointer<QNetworkReply> mPendingReply;
     QString mErrorString;
     QByteArray mBoundaryString;
-    QIODevice * mUploadDevice;
+    QIODevice *mUploadDevice;
     Status mStatus;
     QByteArray mResponse;
     int mNetworkError;

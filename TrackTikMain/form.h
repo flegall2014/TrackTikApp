@@ -67,13 +67,6 @@ public:
         return d->getFieldId(fieldIndex);
     }
 
-    // API button clicked:
-    Q_INVOKABLE inline void sendRequest()
-    {
-        d->sendRequest();
-        emit requestOK();
-    }
-
 private:
     // Return number of fields in form:
     inline int nFields() const

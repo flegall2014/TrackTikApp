@@ -12,9 +12,6 @@ HttpPostField::HttpPostField(QObject * parent)
 // Destructor:
 HttpPostField::~HttpPostField()
 {
-#ifdef QT_DEBUG
-    qDebug() << "HttpPostField::~HttpPostField()" << this;
-#endif
 }
 
 // Return name:

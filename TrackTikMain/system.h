@@ -21,6 +21,18 @@ public:
     // Shutdown:
     virtual void shutdown();
 
+    // Get setting:
+    inline Setting *getSetting() const
+    {
+        return mSetting;
+    }
+
+    // Get session:
+    inline Session *getSession() const
+    {
+        return mSession;
+    }
+
 private:
     // Constructor:
     System(QObject *parent=0);

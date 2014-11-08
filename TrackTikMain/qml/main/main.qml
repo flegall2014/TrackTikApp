@@ -4,16 +4,12 @@ import QtQuick.Window 2.0
 import "../widgets"
 import "../presentation"
 import HttpUp 1.0
+import CAPIConnection 1.0
+import CAPIHandler 1.0
 
 // Main application:
 Item {
     id: application
-
-    // Setup done?
-    property bool setupDone: false
-
-    // User signed in?
-    property bool userSignedIn: false
 
     // States:
     states: [
@@ -52,13 +48,12 @@ Item {
         width: parent.width
         height: parent.height
         form: dataMgr.buildForm(":/json/signin.json")
+        y: -application.height
         states: State {
-            name: "off"
-            when: setupDone && userSignedIn
+            name: "on"
             PropertyChanges {
                 target: signInScreen
-                visible: false
-                y: -application.height
+                y: 0
             }
         }
         Behavior on y {
@@ -72,103 +67,80 @@ Item {
         width: parent.width
         height: parent.height
         form: dataMgr.buildForm(":/json/setup.json")
-        property string serverUrl: ""
+        y: -application.height
+        state: setting.get("setup_done") ? "off" : ""
         states: State {
-            name: "off"
-            when: setupDone
+            name: "on"
             PropertyChanges {
                 target: setupScreen
-                visible: false
-                y: -application.height
+                y: 0
             }
         }
         Behavior on y {
             NumberAnimation {duration: 150}
         }
 
-        // Upload state changed:
-        function onUpdloadStateChanged(uploadState, status, response)
-        {
-            // HTTP loader done:
-            if (uploadState === HttpUploader.Done)
-            {
-                // Status OK:
-                if (status === HttpUploader.OK)
+        // CAPI handler:
+        capiHandler: CAPIHandler {
+            id: setupHandler
+
+            // Success:
+            onSuccessChanged: {
+                // Success:
+                if (success)
                 {
-                    // Parse response:
-                    var jsonObject = JSON.parse(response)
+                    // Setup done:
+                    setting.set("setup_done", 1)
 
-                    // Got success:
-                    if (jsonObject.name === "success")
-                    {
-                        // Loop through the response.data
-                        for (var i=0; i<jsonObject.data.length; i++)
-                        {
-                            var item = jsonObject.data[i]
-                            var name = item["name"]
-                            var value = item["value"]
-                            session.set(name, value)
-                        }
+                    // Set server url:
+                    setting.set("server_url", setupScreen.form.getFieldValue("url"));
 
-                        // Update setting:
-                        //setting.set("setup_done", 1)
-                        //setting.set("server_url", serverUrl);
-                    }
+                    // Hide setup screen:
+                    setupScreen.state = "off"
+
+                    // Show signin screen:
+                    signInScreen.state = "on"
                 }
             }
-        }
 
-        // Progress changed:
-        function onProgressChanged(progress)
-        {
-            console.log(progress)
-        }
-
-        // Network error:
-        function onNetworkError(error)
-        {
-            console.log(error)
-        }
-
-        // Send request (overloaded):
-        function sendRequest()
-        {
-            // Get url:
-            serverUrl = form.getFieldValue("url")
-
-            // Get code:
-            var code = form.getFieldValue("code")
-
-            // Get api code:
-            var apiCall = form.getFieldProperty("parameters", "apicall")
-
-            // Get type:
-            var type = form.getFieldProperty("parameters", "type")
-
-            // Full URL:
-            var fullUrl = serverUrl+"/"+type+"/"+apiCall
-
-            // Open:
-            uploader.open(fullUrl);
-            for (var i=0; i<form.nFields; i++)
-            {
-                // Get field name:
-                var name = form.getFieldProperty(i, "name")
-                if (name === "parameters")
-                    continue
-
-                // Get field value:
-                var value = form.getFieldValue(i)
-
-                // Add field:
-                uploader.addField(name, value)
+            // Network error:
+            onNetworkErrorChanged: {
+                console.log("---------------------------------------------------------- NETWORK ERROR: ", networkError)
             }
 
-            // Add field:
-            uploader.addField("code", code);
+            // Progress changed:
+            onProgressChanged: {
+                console.log("---------------------------------------------------------- PROGRESS: ", progress)
+            }
 
-            // Send:
-            uploader.send()
+            // API error:
+            onApiErrorChanged: {
+                console.log("---------------------------------------------------------- API ERROR: ", apiError)
+            }
+
+            // Response changed:
+            onResponseChanged: {
+                console.log("---------------------------------------------------------- RESPONSE: ", response)
+            }
+        }
+
+        // Do API call:
+        function doAPICall()
+        {
+            // Get server url:
+            var url = form.getFieldValue("url")
+
+            // Set handler:
+            capiConnection.handler = setupHandler
+
+            // Set API call:
+            capiConnection.apiCall = form.getFieldProperty("parameters", "apicall")
+
+            // Add code:
+            capiConnection.addField("code", form.getFieldValue("code"))
+
+            // Call:
+            capiConnection.call(form.getFieldValue("url"))
         }
     }
 
@@ -177,8 +149,11 @@ Item {
         id: popupMgr
     }
 
+    // Initial state:
     Component.onCompleted: {
-        var test = session.get("setup_done")
-        setupDone = test && (test === true)
+        var test = setting.get("setup_done")
+        var setupDone = test && (test === 1)
+        setupScreen.state = setupDone ? "" : "on"
+        signInScreen.state = setupDone ? "on" : ""
     }
 }

@@ -31,9 +31,6 @@ public:
     // Get field value label:
     QVariant getFieldValueLabel(const QString &fieldId, const QString &format) const;
 
-    // API button clicked:
-    void sendRequest();
-
     // Use QList: need to preserve JSON order:
     QList<QVariantMap> formFields;
 };

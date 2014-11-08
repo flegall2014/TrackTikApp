@@ -12,7 +12,7 @@
         "hint": "116LC2A"
       }
     ],
-    "title":"Please enter your server URL and\nEnrollment installation code",
+    "title":"Please enter your server URL and Enrollment installation code",
     "details":"",
     "apicall":"device/setup",
     "type":"api",

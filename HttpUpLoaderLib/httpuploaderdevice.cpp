@@ -98,10 +98,6 @@ qint64 HttpUploaderDevice::writeData(const char *data, qint64 len)
 
 void HttpUploaderDevice::setup()
 {
-#ifdef QT_DEBUG
-    qDebug() << "HttpUploaderDevice: Setup device";
-#endif
-
     HttpUploader * o = (HttpUploader *)parent();
 
     QByteArray crlf("\r\n");
@@ -177,19 +173,11 @@ void HttpUploaderDevice::setup()
 
     if( !o->mPostFields.isEmpty() )
         appendData(endBoundary);
-
-#ifdef QT_DEBUG
-    qDebug() << "Total content length is" << totalSize;
-#endif
 }
 
 // Append data:
 void HttpUploaderDevice::appendData(const QByteArray& data)
 {
-#ifdef QT_DEBUG
-    qDebug() << "HttpUploaderDevice: Append chunk of size" << data.size();
-#endif
-
     QBuffer * buffer = new QBuffer(this);
     buffer->setData(data);
     buffer->open(QBuffer::ReadOnly);

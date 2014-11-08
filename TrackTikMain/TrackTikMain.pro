@@ -19,7 +19,9 @@ SOURCES += \
     datamgr.cpp \
     field.cpp \
     form.cpp \
-    formprivate.cpp
+    formprivate.cpp \
+    capiconnection.cpp \
+    capihandler.cpp
 
 HEADERS += \
     database.h \
@@ -35,7 +37,9 @@ HEADERS += \
     list.h \
     form.h \
     display.h \
-    formprivate.h
+    formprivate.h \
+    capiconnection.h \
+    capihandler.h
 
 CONFIG(debug, debug|release) {
     unix|win32: LIBS += -L$$PWD/../bin/ -lhttpuploaderlibd
