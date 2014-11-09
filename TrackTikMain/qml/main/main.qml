@@ -75,8 +75,6 @@ Item {
 
             // Success:
             onSuccess: {
-                console.log("---------------------------------------------------------- SUCCESS: ", setupHandler.response())
-
                 // Setup done:
                 setting.set("setup_done", 1)
 
