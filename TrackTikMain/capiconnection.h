@@ -80,12 +80,12 @@ signals:
 
     void progressChanged(double progress);
     void stateChanged();
-    void errorChanged();
+    void errorTypeChanged();
 
 private slots:
     void onProgressChanged();
     void onStateChanged();
-    void onErrorChanged();
+    void onErrorTypeChanged();
 };
 
 #endif // CAPICONNECTION_H

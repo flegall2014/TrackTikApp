@@ -5,12 +5,19 @@
 class CAPIHandler : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(ErrorType)
     Q_PROPERTY(bool success READ getSuccess NOTIFY success)
-    Q_PROPERTY(int error READ getError NOTIFY error)
+    Q_PROPERTY(int error READ getErrorType NOTIFY error)
     Q_PROPERTY(double progress READ progress NOTIFY progressChanged)
-    Q_PROPERTY(QString apiError READ getAPIError NOTIFY apiError)
 
 public:
+    enum ErrorType {
+        None,
+        FileError,
+        NetworkError,
+        ApiError
+    };
+
     CAPIHandler(QObject *parent=0);
 
     // Success:
@@ -20,17 +27,11 @@ public:
         setSuccess(true);
     }
 
-    // API Error:
-    inline void onAPIError(const QString &apiError)
-    {
-        setAPIError(apiError);
-    }
-
     // Errors:
-    inline void onError(int error, const QString &errorString)
+    inline void onError(const ErrorType &errorType, const QString &errorString)
     {
         mErrorString = errorString;
-        setError(error);
+        setErrorType(errorType);
     }
 
     // Progress changed:
@@ -53,17 +54,17 @@ public:
     }
 
     // Get network error:
-    inline int getError() const
+    inline ErrorType getErrorType() const
     {
-        return mError;
+        return mErrorType;
     }
 
     // Set success:
-    inline void setError(int err)
+    inline void setErrorType(const ErrorType &errorType)
     {
-        if (err > 0)
+        if (errorType != None)
         {
-            mError = err;
+            mErrorType = errorType;
             emit error();
         }
     }
@@ -82,19 +83,6 @@ public:
             mProgress = progress;
             emit progressChanged();
         }
-    }
-
-    // Get api error:
-    inline QString getAPIError()
-    {
-        return mAPIError;
-    }
-
-    // Set success:
-    inline void setAPIError(const QString &error)
-    {
-        mAPIError = error;
-        emit apiError();
     }
 
     // Get response:
@@ -118,8 +106,7 @@ public:
 private:
     bool mSuccess;
     QString mResponse;
-    QString mAPIError;
-    int mError;
+    ErrorType mErrorType;
     QString mErrorString;
     double mProgress;
 

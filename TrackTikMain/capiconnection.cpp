@@ -53,7 +53,7 @@ void CAPIConnection::setupConnections()
 {
     connect(mHttpUploader, SIGNAL(progressChanged()), SLOT(onProgressChanged()), Qt::UniqueConnection);
     connect(mHttpUploader, SIGNAL(stateChanged()), SLOT(onStateChanged()), Qt::UniqueConnection);
-    connect(mHttpUploader, SIGNAL(errorChanged()), SLOT(onErrorChanged()), Qt::UniqueConnection);
+    connect(mHttpUploader, SIGNAL(errorTypeChanged()), SLOT(onErrorTypeChanged()), Qt::UniqueConnection);
 }
 
 // Before submit:
@@ -93,7 +93,7 @@ void CAPIConnection::onStateChanged()
 
                 // API Error?
                 if (name == "api.error")
-                    mHandler->onAPIError(jsonString);
+                    mHandler->onError(CAPIHandler::ApiError, jsonString);
                 else
                 if (name == "success")
                     mHandler->onSuccess(jsonString);
@@ -103,9 +103,9 @@ void CAPIConnection::onStateChanged()
 }
 
 // Network error changed:
-void CAPIConnection::onErrorChanged()
+void CAPIConnection::onErrorTypeChanged()
 {
     if (!mHandler)
         return;
-    mHandler->onError(mHttpUploader->error(), mHttpUploader->errorString());
+    mHandler->onError((CAPIHandler::ErrorType)mHttpUploader->errorType(), mHttpUploader->errorString());
 }

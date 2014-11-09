@@ -15,7 +15,7 @@ HttpUploader::HttpUploader(QObject *parent) :
     mState(Unsent),
     mPendingReply(NULL),
     mUploadDevice(NULL),
-    mError(None),
+    mErrorType(None),
     mErrorString("")
 {
     mNetworkAccessManager = new QNetworkAccessManager(this);
@@ -68,7 +68,7 @@ void HttpUploader::open(const QUrl &url)
     {
         setUrl(url);
         mState = Opened;
-    }
+    } else qDebug() << "HTTPUPLOADER BUSY LOADING";
 }
 
 // Send:
@@ -132,7 +132,7 @@ void HttpUploader::sendFile(const QString& fileName)
         {
             // Done:
             setErrorString(mUploadDevice->errorString());
-            setError(FileError);
+            setErrorType(FileError);
             clear();
             return;
         }
@@ -204,7 +204,7 @@ void HttpUploader::onNetworkError(const QNetworkReply::NetworkError &error)
 
     // Update network error:
     setErrorString(mPendingReply->errorString());
-    setError(NetworkError);
+    setErrorType(NetworkError);
 
     mState = Done;
 

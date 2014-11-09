@@ -21,13 +21,10 @@ Rectangle {
         onSuccess: console.log("DEFAULT SUCCESS = ", success)
 
         // Default impl:
-        onError: errorMgr.showErrorMsg(capiHandler.errorString())
+        onError: errorMgr.showErrorMsg(error, capiHandler.errorString())
 
         // Default impl:
         onProgressChanged: console.log("DEFAULT PROGRESS = ", progress)
-
-        // Default impl:
-        onApiError: errorMgr.showErrorMsg(apiError)
     }
 
     // CAPI connection:

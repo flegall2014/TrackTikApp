@@ -23,10 +23,11 @@ public:
         Done        //< Upload finished (you need to examine status property)
     };
 
-    enum Error {
+    enum ErrorType {
         None,
         FileError,
-        NetworkError
+        NetworkError,
+        ApiError
     };
 
     // Constructor:
@@ -74,16 +75,16 @@ public:
     }
 
     // Error:
-    inline Error error() const
+    inline ErrorType errorType() const
     {
-        return mError;
+        return mErrorType;
     }
 
     // Set error:
-    inline void setError(const Error &error)
+    inline void setErrorType(const ErrorType &errorType)
     {
-        mError = error;
-        emit errorChanged();
+        mErrorType = errorType;
+        emit errorTypeChanged();
     }
 
     // Error string (file or network error):
@@ -134,8 +135,8 @@ signals:
     void progressChanged();
     void stateChanged();
     void statusChanged();
-    void networkErrorChanged();
-    void errorChanged();
+    void networkerrorTypeChanged();
+    void errorTypeChanged();
 
 private slots:
     void replyFinished();
@@ -151,7 +152,7 @@ private:
     QPointer<QNetworkReply> mPendingReply;
     QByteArray mBoundaryString;
     QIODevice *mUploadDevice;
-    Error mError;
+    ErrorType mErrorType;
     QString mErrorString;
     QByteArray mResponse;
     friend class HttpUploaderDevice;

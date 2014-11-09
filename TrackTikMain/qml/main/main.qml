@@ -91,13 +91,10 @@ Item {
             }
 
             // Default impl:
-            onError: errorMgr.showErrorMsg(setupHandler.errorString())
+            onError: errorMgr.showErrorMsg(error, setupHandler.errorString())
 
             // Progress changed:
             onProgressChanged: console.log("---------------------------------------------------------- PROGRESS: ", progress)
-
-            // API error:
-            onApiError: errorMgr.showErrorMsg(apiError)
         }
 
         // Do API call:
