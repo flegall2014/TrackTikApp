@@ -60,8 +60,10 @@ void CAPIConnection::setupConnections()
 void CAPIConnection::beforeSubmit()
 {
     mHttpUploader->addField("__device_account_id", mSystem->getSetting()->get("DEVICE_ACCOUNT_ID").toString());
+    mHttpUploader->addField("__device_token", mSystem->getSetting()->get("DEVICE_TOKEN").toString());
     mHttpUploader->addField("__device_id", mSystem->getSetting()->get("DEVICE_ID").toString());
     mHttpUploader->addField("__token", mSystem->getSetting()->get("API_TOKEN").toString());
+    mHttpUploader->addField("__device_location_id", mSystem->getSetting()->get("DEVICE_LOCATION_ID").toString());
 }
 
 // Progress changed:

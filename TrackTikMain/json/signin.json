@@ -1,7 +1,7 @@
 {
     "fields": [
       { "type": "text",
-        "name": "name",
+        "name": "email",
         "label": "Username or Email",
         "hint": "Username / Email"
       },
@@ -14,7 +14,7 @@
     ],
     "title":"Please Sign-In",
     "details":"Sign-In to continue",
-    "apicall":"user/signin",
+    "apicall":"user/login",
     "type":"API",
     "id":"3050",
     "submitLabel":"Sign-In"

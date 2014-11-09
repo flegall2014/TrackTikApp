@@ -11,12 +11,11 @@ import CAPIHandler 1.0
 Item {
     id: application
 
-    // States:
-    states: [
-        State {
-            name: "signedIn"
-        }
-    ]
+    // Setup done?
+    property bool setupDone: setting.get("setup_done")
+
+    // Signed in?
+    property bool signedIn: false
 
     // Settings:
     Settings {
@@ -36,7 +35,7 @@ Item {
     // Slide deck:
     SlideDeck {
         id: slideDeck
-        visible: application.state === "signedIn"
+        visible: signedIn
         anchors.fill: parent
         forms: [":/json/aaa.json", ":/json/bbb.json", ":/json/ccc.json"]
         mouseAreaEnabled: (popupMgr.status === Loader.Null)
@@ -48,6 +47,66 @@ Item {
         width: parent.width
         height: parent.height
         form: dataMgr.buildForm(":/json/signin.json")
+        visible: setupDone && !signedIn
+
+        // CAPI handler:
+        capiHandler: CAPIHandler {
+            id: signinHandler
+
+            // Success:
+            onSuccess: {
+                // Get string response:
+                var response = signinHandler.response()
+
+                // Parse response:
+                var jsonObject = JSON.parse(response)
+
+                // Read api:
+                for (var key in jsonObject.attributes.api)
+                    session.set("api_"+key, jsonObject.attributes.api[key])
+
+                // Read user:
+                for (key in jsonObject.attributes.user)
+                    session.set("user_"+key, jsonObject.attributes.user[key])
+
+                // Signed in:
+                signedIn = true
+            }
+
+            // Default impl:
+            onError: errorMgr.showErrorMsg(error, signinHandler.errorString())
+
+            // Progress changed:
+            onProgressChanged: console.log("---------------------------------------------------------- PROGRESS: ", progress)
+        }
+
+        // Do API call:
+        function doAPICall()
+        {
+            // Set handler:
+            capiConnection.handler = signinHandler
+
+            // Set API call:
+            capiConnection.apiCall = form.getFieldProperty("parameters", "apicall")
+
+            // Loop through all fields:
+            for (var i=0; i<form.nFields; i++)
+            {
+                // Get field name/value:
+                var fieldName = form.getFieldProperty(i, "name")
+                var fieldValue = form.getFieldValue(fieldName)
+
+                // Don't care about parameters:
+                if (fieldName === "parameters")
+                    continue
+
+                // Add code:
+                capiConnection.addField(fieldName, fieldValue)
+            }
+
+            // Call:
+            capiConnection.call()
+        }
     }
 
     // Setup screen:
@@ -56,18 +115,7 @@ Item {
         width: parent.width
         height: parent.height
         form: dataMgr.buildForm(":/json/setup.json")
-        visible: false
-        state: setting.get("setup_done") ? "" : "on"
-        states: State {
-            name: "on"
-            PropertyChanges {
-                target: setupScreen
-                visible: true
-            }
-        }
-        Behavior on opacity {
-            NumberAnimation {duration: 150}
-        }
+        visible: !setupDone
 
         // CAPI handler:
         capiHandler: CAPIHandler {
@@ -90,15 +138,13 @@ Item {
 
                 // Setup done:
                 setting.set("setup_done", 1)
+                setupDone = true
 
                 // Set server url:
                 setting.set("server_url", setupScreen.form.getFieldValue("url"));
 
                 // Hide setup screen:
-                setupScreen.state = "off"
-
-                // Show signin screen:
-                signInScreen.state = "on"
+                setupScreen.state = ""
             }
 
             // Default impl:
