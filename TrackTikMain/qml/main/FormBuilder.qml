@@ -11,31 +11,23 @@ Rectangle {
 
     // Form (from DataMgr):
     property variant form
-    enabled: (popupMgr.status === Loader.Null)
+    enabled: ((popupMgr.status === Loader.Null) && (errorMgr.status === Loader.Null))
 
     // Default CAPI handler, can be overriden:
     property var capiHandler: CAPIHandler {
         id: capiHandler
 
         // Default impl:
-        onSuccessChanged: {
-            console.log("DEFAULT SUCCESS = ", success)
-        }
+        onSuccess: console.log("DEFAULT SUCCESS = ", success)
 
         // Default impl:
-        onErrorChanged: {
-            console.log(error, capiHandler.errorCode())
-        }
+        onError: errorMgr.showErrorMsg(capiHandler.errorString())
 
         // Default impl:
-        onProgressChanged: {
-            console.log("DEFAULT PROGRESS = ", progress)
-        }
+        onProgressChanged: console.log("DEFAULT PROGRESS = ", progress)
 
         // Default impl:
-        onApiErrorChanged: {
-            console.log("DEFAULT API ERROR = ", apiError)
-        }
+        onApiError: errorMgr.showErrorMsg(apiError)
     }
 
     // CAPI connection:

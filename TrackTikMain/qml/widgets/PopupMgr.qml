@@ -68,7 +68,6 @@ Loader {
 
     // Callbacks:
     onLoaded: {
-
         // Listen to signals:
         item.closeClicked.connect(onCloseClicked)
         item.saveClicked.connect(onSaveClicked)

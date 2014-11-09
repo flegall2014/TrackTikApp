@@ -16,7 +16,7 @@ HttpUploader::HttpUploader(QObject *parent) :
     mPendingReply(NULL),
     mUploadDevice(NULL),
     mError(None),
-    mErrorCode(0)
+    mErrorString("")
 {
     mNetworkAccessManager = new QNetworkAccessManager(this);
 }
@@ -62,12 +62,12 @@ void HttpUploader::clear()
 }
 
 // Open:
-void HttpUploader::open(const QUrl& url)
+void HttpUploader::open(const QUrl &url)
 {
-    if (mState == Unsent)
+    //if (mState == Unsent)
     {
         setUrl(url);
-        setState(Opened);
+        mState = Opened;
     }
 }
 
@@ -104,7 +104,7 @@ void HttpUploader::send()
         mPendingReply = mNetworkAccessManager->post(request, mUploadDevice);
 
         // Update state & progress:
-        setState(Loading);
+        mState = Loading;
         setProgress(0.);
 
         // Connect:
@@ -131,6 +131,7 @@ void HttpUploader::sendFile(const QString& fileName)
         if (!mUploadDevice->open(QIODevice::ReadOnly))
         {
             // Done:
+            setErrorString(mUploadDevice->errorString());
             setError(FileError);
             clear();
             return;
@@ -140,7 +141,7 @@ void HttpUploader::sendFile(const QString& fileName)
         mPendingReply = mNetworkAccessManager->post(request, mUploadDevice);
 
         // Loading:
-        setState(Loading);
+        mState = Loading;
 
         // Reset progress:
         setProgress(0.);
@@ -172,22 +173,6 @@ void HttpUploader::addFile(const QString& fieldName, const QString& fileName, co
     mPostFields.append(field);
 }
 
-// Reply finished:
-void HttpUploader::replyFinished()
-{
-    // Set response:
-    setResponse(mPendingReply->readAll());
-
-    // Done:
-    setState(Done);
-
-    // Clear:
-    clear();
-
-    // Back to Unsent state:
-    setState(Unsent);
-}
-
 // Upload progress:
 void HttpUploader::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
 {
@@ -199,16 +184,31 @@ void HttpUploader::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
     }
 }
 
+// Reply finished:
+void HttpUploader::replyFinished()
+{
+    // Set response:
+    setResponse(mPendingReply->readAll());
+
+    // Done:
+    setState(Done);
+
+    // Clear:
+    clear();
+}
+
 // Network error:
 void HttpUploader::onNetworkError(const QNetworkReply::NetworkError &error)
 {
+    Q_UNUSED(error);
+
     // Update network error:
-    setErrorCode((int)error);
+    setErrorString(mPendingReply->errorString());
     setError(NetworkError);
 
     // Clear:
     clear();
-
-    // Back to Unsent state:
-    setState(Unsent);
 }
+
+
+

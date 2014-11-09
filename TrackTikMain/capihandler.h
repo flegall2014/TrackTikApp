@@ -5,10 +5,10 @@
 class CAPIHandler : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(bool success READ success WRITE setSuccess NOTIFY successChanged)
-    Q_PROPERTY(int error READ error WRITE setError NOTIFY errorChanged)
-    Q_PROPERTY(double progress READ progress WRITE setProgress NOTIFY progressChanged)
-    Q_PROPERTY(QString apiError READ apiError WRITE setAPIError NOTIFY apiErrorChanged)
+    Q_PROPERTY(bool success READ getSuccess NOTIFY success)
+    Q_PROPERTY(int error READ getError NOTIFY error)
+    Q_PROPERTY(double progress READ progress NOTIFY progressChanged)
+    Q_PROPERTY(QString apiError READ getAPIError NOTIFY apiError)
 
 public:
     CAPIHandler(QObject *parent=0);
@@ -24,13 +24,12 @@ public:
     inline void onAPIError(const QString &apiError)
     {
         setAPIError(apiError);
-        setSuccess(false);
     }
 
     // Errors:
-    inline void onError(int error, int errorCode)
+    inline void onError(int error, const QString &errorString)
     {
-        mErrorCode = errorCode;
+        mErrorString = errorString;
         setError(error);
     }
 
@@ -41,31 +40,31 @@ public:
     }
 
     // Get success:
-    inline bool success() const
+    inline bool getSuccess() const
     {
         return mSuccess;
     }
 
     // Set success:
-    inline void setSuccess(bool success)
+    inline void setSuccess(bool succ)
     {
-        mSuccess = success;
-        emit successChanged();
+        mSuccess = succ;
+        emit success();
     }
 
     // Get network error:
-    inline int error() const
+    inline int getError() const
     {
         return mError;
     }
 
     // Set success:
-    inline void setError(int error)
+    inline void setError(int err)
     {
-        if (error > 0)
+        if (err > 0)
         {
-            mError = error;
-            emit errorChanged();
+            mError = err;
+            emit error();
         }
     }
 
@@ -86,7 +85,7 @@ public:
     }
 
     // Get api error:
-    inline QString apiError()
+    inline QString getAPIError()
     {
         return mAPIError;
     }
@@ -95,7 +94,7 @@ public:
     inline void setAPIError(const QString &error)
     {
         mAPIError = error;
-        emit apiErrorChanged();
+        emit apiError();
     }
 
     // Get response:
@@ -110,10 +109,10 @@ public:
         mResponse = response;
     }
 
-    // Return error code:
-    Q_INVOKABLE inline int errorCode() const
+    // Return error string:
+    Q_INVOKABLE inline QString errorString() const
     {
-        return mErrorCode;
+        return mErrorString;
     }
 
 private:
@@ -121,13 +120,13 @@ private:
     QString mResponse;
     QString mAPIError;
     int mError;
-    int mErrorCode;
+    QString mErrorString;
     double mProgress;
 
 signals:
-    void successChanged();
-    void errorChanged();
-    void apiErrorChanged();
+    void success();
+    void error();
+    void apiError();
     void progressChanged();
 };
 

@@ -6,6 +6,7 @@
 #include "json.h"
 #include "setting.h"
 #include "session.h"
+#include "utils.h"
 
 // Constructor:
 CAPIConnection::CAPIConnection(QObject *parent) :
@@ -30,7 +31,8 @@ void CAPIConnection::addFile(const QString &fieldName, const QString &fileName)
 
 // Call the connection:
 void CAPIConnection::call(const QString &url)
-{
+{   
+    // Back to Unsent state:
     QString toUse = url;
     if (toUse.isEmpty())
         toUse = mSystem->getSetting()->get("server_url").toString();
@@ -84,11 +86,18 @@ void CAPIConnection::onStateChanged()
         {
             QVariantMap jsonObject = JSON::instance().parse(jsonString);
 
-            // API Error?
-            if (jsonObject["name"] == "api.error")
-                mHandler->onAPIError(jsonString);
-            else
-                mHandler->onSuccess(jsonString);
+            // Make sure we got a valid TrackTik notification:
+            if (jsonObject.contains("name"))
+            {
+                QString name = Utils::getKey(jsonObject["name"].toString());
+
+                // API Error?
+                if (name == "api.error")
+                    mHandler->onAPIError(jsonString);
+                else
+                if (name == "success")
+                    mHandler->onSuccess(jsonString);
+            }
         }
     }
 }
@@ -98,5 +107,5 @@ void CAPIConnection::onErrorChanged()
 {
     if (!mHandler)
         return;
-    mHandler->onError(mHttpUploader->error(), mHttpUploader->errorCode());
+    mHandler->onError(mHttpUploader->error(), mHttpUploader->errorString());
 }

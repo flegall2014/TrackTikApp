@@ -8,6 +8,6 @@ double mProgress;
 
 CAPIHandler::CAPIHandler(QObject *parent) :
     QObject(parent), mSuccess(false), mResponse(""),
-    mAPIError(""), mError(0), mErrorCode(0), mProgress(0)
+    mAPIError(""), mError(0), mErrorString(""), mProgress(0)
 {
 }

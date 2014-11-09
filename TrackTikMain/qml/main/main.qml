@@ -48,17 +48,6 @@ Item {
         width: parent.width
         height: parent.height
         form: dataMgr.buildForm(":/json/signin.json")
-        y: -application.height
-        states: State {
-            name: "on"
-            PropertyChanges {
-                target: signInScreen
-                y: 0
-            }
-        }
-        Behavior on y {
-            NumberAnimation {duration: 150}
-        }
     }
 
     // Setup screen:
@@ -67,16 +56,16 @@ Item {
         width: parent.width
         height: parent.height
         form: dataMgr.buildForm(":/json/setup.json")
-        y: -application.height
-        state: setting.get("setup_done") ? "off" : ""
+        visible: false
+        state: setting.get("setup_done") ? "" : "on"
         states: State {
             name: "on"
             PropertyChanges {
                 target: setupScreen
-                y: 0
+                visible: true
             }
         }
-        Behavior on y {
+        Behavior on opacity {
             NumberAnimation {duration: 150}
         }
 
@@ -85,61 +74,46 @@ Item {
             id: setupHandler
 
             // Success:
-            onSuccessChanged: {
-                // Success:
-                if (success)
-                {
-                    console.log("---------------------------------------------------------- SUCCESS: ", setupHandler.response())
+            onSuccess: {
+                console.log("---------------------------------------------------------- SUCCESS: ", setupHandler.response())
 
-                    // Setup done:
-                    setting.set("setup_done", 1)
+                // Setup done:
+                setting.set("setup_done", 1)
 
-                    // Set server url:
-                    setting.set("server_url", setupScreen.form.getFieldValue("url"));
+                // Set server url:
+                setting.set("server_url", setupScreen.form.getFieldValue("url"));
 
-                    // Hide setup screen:
-                    setupScreen.state = "off"
+                // Hide setup screen:
+                setupScreen.state = "off"
 
-                    // Show signin screen:
-                    signInScreen.state = "on"
-                }
+                // Show signin screen:
+                signInScreen.state = "on"
             }
 
             // Default impl:
-            onErrorChanged: {
-                console.log("---------------------------------------------------------- ERROR: ",error, setupHandler.errorCode())
-            }
+            onError: errorMgr.showErrorMsg(setupHandler.errorString())
 
             // Progress changed:
-            onProgressChanged: {
-                console.log("---------------------------------------------------------- PROGRESS: ", progress)
-            }
+            onProgressChanged: console.log("---------------------------------------------------------- PROGRESS: ", progress)
 
             // API error:
-            onApiErrorChanged: {
-                console.log("---------------------------------------------------------- API ERROR: ", apiError)
-            }
+            onApiError: errorMgr.showErrorMsg(apiError)
         }
 
         // Do API call:
         function doAPICall()
         {
-            console.log("DOING APICALL"
-                        )
             // Get server url:
             var url = form.getFieldValue("url")
-            console.log("url = ", url)
 
             // Set handler:
             capiConnection.handler = setupHandler
 
             // Set API call:
             capiConnection.apiCall = form.getFieldProperty("parameters", "apicall")
-            console.log("API CALL = ", capiConnection.apiCall)
 
             // Add code:
             capiConnection.addField("code", form.getFieldValue("code"))
-            console.log("CODE = ", form.getFieldValue("code"))
 
             // Call:
             capiConnection.call(url)
@@ -149,6 +123,11 @@ Item {
     // Popup mgr:
     PopupMgr {
         id: popupMgr
+    }
+
+    // Error mgr:
+    ErrorMgr {
+        id: errorMgr
     }
 
     // Initial state:

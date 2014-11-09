@@ -102,5 +102,8 @@
         <file>qml/communication/Communication.qml</file>
         <file>qml/main/SetupScreen.qml</file>
         <file>json/setup.json</file>
+        <file>qml/main/ErrorMgr.qml</file>
+        <file>qml/dialogs/ErrorDialog.qml</file>
+        <file>qml/styles/ErrorDialogStyle.qml</file>
     </qresource>
 </RCC>

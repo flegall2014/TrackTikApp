@@ -86,16 +86,16 @@ public:
         emit errorChanged();
     }
 
-    // Error code (for network errors):
-    inline int errorCode() const
+    // Error string (file or network error):
+    inline QString errorString() const
     {
-        return mErrorCode;
+        return mErrorString;
     }
 
     // Set error code:
-    inline void setErrorCode(int code)
+    inline void setErrorString(const QString &errorString)
     {
-        mErrorCode = code;
+        mErrorString = errorString;
     }
 
     // Response:
@@ -152,7 +152,7 @@ private:
     QByteArray mBoundaryString;
     QIODevice *mUploadDevice;
     Error mError;
-    int mErrorCode;
+    QString mErrorString;
     QByteArray mResponse;
     friend class HttpUploaderDevice;
 };
