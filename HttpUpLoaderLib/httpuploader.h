@@ -23,11 +23,10 @@ public:
         Done        //< Upload finished (you need to examine status property)
     };
 
-    // Status:
-    enum Status {
+    enum Error {
         None,
-        Error,
-        OK
+        FileError,
+        NetworkError
     };
 
     // Constructor:
@@ -36,8 +35,11 @@ public:
     // Destructor:
     virtual ~HttpUploader();
 
-    // Get the destination URL:
-    QUrl url() const;
+    // Return url:
+    inline QUrl url() const
+    {
+        return mUrl;
+    }
 
     // Set the destination URL of the upload:
     void setUrl(const QUrl& url);
@@ -46,22 +48,67 @@ public:
     QQmlListProperty<HttpPostField> postFields();
 
     // Progress:
-    qreal progress() const;
+    inline qreal progress() const
+    {
+        return mProgress;
+    }
+
+    // Set progress:
+    inline void setProgress(qreal progress)
+    {
+        mProgress = progress;
+        emit progressChanged();
+    }
 
     // State:
-    HttpUploader::State state() const;
+    inline State state() const
+    {
+        return mState;
+    }
 
-    // Error string:
-    QString errorString() const;
+    // Set state:
+    inline void setState(const State &state)
+    {
+        mState = state;
+        emit stateChanged();
+    }
 
-    // Response text:
-    QString responseText() const;
+    // Error:
+    inline Error error() const
+    {
+        return mError;
+    }
 
-    // Status:
-    HttpUploader::Status status() const;
+    // Set error:
+    inline void setError(const Error &error)
+    {
+        mError = error;
+        emit errorChanged();
+    }
 
-    // Return network error:
-    int networkError() const;
+    // Error code (for network errors):
+    inline int errorCode() const
+    {
+        return mErrorCode;
+    }
+
+    // Set error code:
+    inline void setErrorCode(int code)
+    {
+        mErrorCode = code;
+    }
+
+    // Response:
+    QString response() const
+    {
+        return QString::fromUtf8(mResponse.constData(), mResponse.size());
+    }
+
+    // Set response:
+    inline void setResponse(const QByteArray &response)
+    {
+        mResponse = response;
+    }
 
 public slots:
     // Reset object to the initial state (close files/clear fields/etc.)
@@ -76,9 +123,6 @@ public slots:
     // Start upload, but use file as POST body:
     void sendFile(const QString& fileName);
 
-    // Abort current transaction:
-    void abort();
-
     // Add key/value field:
     void addField(const QString& fieldName, const QString& fieldValue);
 
@@ -91,6 +135,7 @@ signals:
     void stateChanged();
     void statusChanged();
     void networkErrorChanged();
+    void errorChanged();
 
 private slots:
     void replyFinished();
@@ -104,11 +149,10 @@ private:
     qreal mProgress;
     State mState;
     QPointer<QNetworkReply> mPendingReply;
-    QString mErrorString;
     QByteArray mBoundaryString;
     QIODevice *mUploadDevice;
-    Status mStatus;
+    Error mError;
+    int mErrorCode;
     QByteArray mResponse;
-    int mNetworkError;
     friend class HttpUploaderDevice;
 };

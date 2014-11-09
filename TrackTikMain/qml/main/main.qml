@@ -89,6 +89,8 @@ Item {
                 // Success:
                 if (success)
                 {
+                    console.log("---------------------------------------------------------- SUCCESS: ", setupHandler.response())
+
                     // Setup done:
                     setting.set("setup_done", 1)
 
@@ -103,9 +105,9 @@ Item {
                 }
             }
 
-            // Network error:
-            onNetworkErrorChanged: {
-                console.log("---------------------------------------------------------- NETWORK ERROR: ", networkError)
+            // Default impl:
+            onErrorChanged: {
+                console.log("---------------------------------------------------------- ERROR: ",error, setupHandler.errorCode())
             }
 
             // Progress changed:
@@ -117,30 +119,30 @@ Item {
             onApiErrorChanged: {
                 console.log("---------------------------------------------------------- API ERROR: ", apiError)
             }
-
-            // Response changed:
-            onResponseChanged: {
-                console.log("---------------------------------------------------------- RESPONSE: ", response)
-            }
         }
 
         // Do API call:
         function doAPICall()
         {
+            console.log("DOING APICALL"
+                        )
             // Get server url:
             var url = form.getFieldValue("url")
+            console.log("url = ", url)
 
             // Set handler:
             capiConnection.handler = setupHandler
 
             // Set API call:
             capiConnection.apiCall = form.getFieldProperty("parameters", "apicall")
+            console.log("API CALL = ", capiConnection.apiCall)
 
             // Add code:
             capiConnection.addField("code", form.getFieldValue("code"))
+            console.log("CODE = ", form.getFieldValue("code"))
 
             // Call:
-            capiConnection.call(form.getFieldValue("url"))
+            capiConnection.call(url)
         }
     }
 

@@ -23,8 +23,8 @@ Rectangle {
         }
 
         // Default impl:
-        onNetworkErrorChanged: {
-            console.log("DEFAULT NETWORK ERROR = ", networkError)
+        onErrorChanged: {
+            console.log(error, capiHandler.errorCode())
         }
 
         // Default impl:
@@ -35,11 +35,6 @@ Rectangle {
         // Default impl:
         onApiErrorChanged: {
             console.log("DEFAULT API ERROR = ", apiError)
-        }
-
-        // Default impl:
-        onResponseChanged: {
-            console.log("DEFAULT RESPONSE = ", response)
         }
     }
 
@@ -113,7 +108,29 @@ Rectangle {
     // Default doAPICall:
     function doAPICall()
     {
-        var x = 0
+        // Get server url:
+        var url = setting.get("server_url")
+
+        // Set API call:
+        capiConnection.apiCall = form.getFieldProperty("parameters", "apicall")
+
+        // Loop through all fields:
+        for (var i=0; i<form.nFields; i++)
+        {
+            // Get field name/value:
+            var fieldName = form.getFieldProperty(i, "name")
+            var fieldValue = form.getFieldValue(fieldName)
+
+            // Don't care about parameters:
+            if (fieldName === "parameters")
+                continue
+
+            // Add code:
+            capiConnection.addField(fieldName, fieldValue)
+        }
+
+        // Call:
+        capiConnection.call()
     }
 
     // Title area:

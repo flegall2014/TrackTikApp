@@ -6,36 +6,36 @@ class CAPIHandler : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(bool success READ success WRITE setSuccess NOTIFY successChanged)
-    Q_PROPERTY(int networkError READ networkError WRITE setNetworkError NOTIFY networkErrorChanged)
+    Q_PROPERTY(int error READ error WRITE setError NOTIFY errorChanged)
     Q_PROPERTY(double progress READ progress WRITE setProgress NOTIFY progressChanged)
     Q_PROPERTY(QString apiError READ apiError WRITE setAPIError NOTIFY apiErrorChanged)
-    Q_PROPERTY(QString response READ response WRITE setResponse NOTIFY responseChanged)
 
 public:
     CAPIHandler(QObject *parent=0);
 
     // Success:
-    void onSuccess(const QString &response)
+    inline void onSuccess(const QString &response)
     {
         setResponse(response);
         setSuccess(true);
     }
 
     // API Error:
-    void onAPIError(const QString &apiError)
+    inline void onAPIError(const QString &apiError)
     {
         setAPIError(apiError);
         setSuccess(false);
     }
 
-    // Network errror:
-    void onNetworkError(int error)
+    // Errors:
+    inline void onError(int error, int errorCode)
     {
-        setNetworkError(error);
+        mErrorCode = errorCode;
+        setError(error);
     }
 
     // Progress changed:
-    void onProgressChanged(double progress)
+    inline void onProgressChanged(double progress)
     {
         setProgress(progress);
     }
@@ -54,16 +54,19 @@ public:
     }
 
     // Get network error:
-    inline bool networkError() const
+    inline int error() const
     {
-        return mNetworkError;
+        return mError;
     }
 
     // Set success:
-    inline void setNetworkError(int error)
+    inline void setError(int error)
     {
-        mNetworkError = error;
-        emit networkErrorChanged();
+        if (error > 0)
+        {
+            mError = error;
+            emit errorChanged();
+        }
     }
 
     // Get progress:
@@ -96,7 +99,7 @@ public:
     }
 
     // Get response:
-    inline QString response()
+    Q_INVOKABLE inline QString response()
     {
         return mResponse;
     }
@@ -105,21 +108,26 @@ public:
     inline void setResponse(const QString &response)
     {
         mResponse = response;
-        emit responseChanged();
+    }
+
+    // Return error code:
+    Q_INVOKABLE inline int errorCode() const
+    {
+        return mErrorCode;
     }
 
 private:
     bool mSuccess;
     QString mResponse;
     QString mAPIError;
-    int mNetworkError;
+    int mError;
+    int mErrorCode;
     double mProgress;
 
 signals:
     void successChanged();
-    void networkErrorChanged();
+    void errorChanged();
     void apiErrorChanged();
-    void responseChanged();
     void progressChanged();
 };
 

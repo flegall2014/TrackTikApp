@@ -51,7 +51,7 @@ void CAPIConnection::setupConnections()
 {
     connect(mHttpUploader, SIGNAL(progressChanged()), SLOT(onProgressChanged()), Qt::UniqueConnection);
     connect(mHttpUploader, SIGNAL(stateChanged()), SLOT(onStateChanged()), Qt::UniqueConnection);
-    connect(mHttpUploader, SIGNAL(networkErrorChanged()), SLOT(onNetworkErrorChanged()), Qt::UniqueConnection);
+    connect(mHttpUploader, SIGNAL(errorChanged()), SLOT(onErrorChanged()), Qt::UniqueConnection);
 }
 
 // Before submit:
@@ -78,9 +78,10 @@ void CAPIConnection::onStateChanged()
 
     // HTTP loader done:
     if (mHttpUploader->state() == HttpUploader::Done)
-        if (mHttpUploader->status() == HttpUploader::OK)
+    {
+        QString jsonString = mHttpUploader->response();
+        if (!jsonString.simplified().isEmpty())
         {
-            QString jsonString = mHttpUploader->responseText();
             QVariantMap jsonObject = JSON::instance().parse(jsonString);
 
             // API Error?
@@ -89,12 +90,13 @@ void CAPIConnection::onStateChanged()
             else
                 mHandler->onSuccess(jsonString);
         }
+    }
 }
 
 // Network error changed:
-void CAPIConnection::onNetworkErrorChanged()
+void CAPIConnection::onErrorChanged()
 {
     if (!mHandler)
         return;
-    mHandler->onNetworkError(mHttpUploader->networkError());
+    mHandler->onError(mHttpUploader->error(), mHttpUploader->errorCode());
 }
