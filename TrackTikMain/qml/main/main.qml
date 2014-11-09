@@ -75,6 +75,19 @@ Item {
 
             // Success:
             onSuccess: {
+                // Get string response:
+                var response = setupHandler.response()
+
+                // Parse response:
+                var jsonObject = JSON.parse(response)
+
+                // Update setting:
+                for (var i=0; i<jsonObject.data.length; i++)
+                {
+                    var item = jsonObject.data[i]
+                    setting.set(item["name"],  item["value"]);
+                }
+
                 // Setup done:
                 setting.set("setup_done", 1)
 
