@@ -64,7 +64,7 @@ void HttpUploader::clear()
 // Open:
 void HttpUploader::open(const QUrl &url)
 {
-    //if (mState == Unsent)
+    if (mState != Loading)
     {
         setUrl(url);
         mState = Opened;
@@ -205,6 +205,8 @@ void HttpUploader::onNetworkError(const QNetworkReply::NetworkError &error)
     // Update network error:
     setErrorString(mPendingReply->errorString());
     setError(NetworkError);
+
+    mState = Done;
 
     // Clear:
     clear();
