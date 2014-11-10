@@ -31,6 +31,7 @@ Rectangle {
     property var capiConnection: CAPIConnection {
         id: capiConnection
         handler: capiHandler
+        onBusyChanged: application.showBusyIndicator(busy)
     }
 
     // Form  changed:

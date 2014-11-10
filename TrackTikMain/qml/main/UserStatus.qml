@@ -7,6 +7,8 @@ Rectangle {
     Layout.preferredHeight: 80*display.scale
     Layout.minimumHeight: 80*display.scale
     color: settings.colorBackgroundDark
+    property alias userName: userName.text
+    property alias userPicture: userPicture.source
 
     RowLayout {
         anchors.fill: parent
@@ -16,11 +18,10 @@ Rectangle {
 
         // User picture:
         Image {
-            id : userPicture
+            id: userPicture
             Layout.preferredHeight: 60*display.scale
             Layout.preferredWidth: 60*display.scale
             fillMode: Image.PreserveAspectCrop
-            source: "https://intern-dev-thumb.s3.amazonaws.com/15e7b0b5059d381a47865db7d9e21af1decd2915-1388773682-894.jpg"
             cache: true
             asynchronous: true
         }
@@ -30,8 +31,7 @@ Rectangle {
             Layout.fillWidth: true
 
             Text {
-                id: name
-                text: qsTr("Simon Ferragne")
+                id: userName
                 color: settings.colorFontLightGrey
                 font.bold: true
                 font.pixelSize: 15*display.scale

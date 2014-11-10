@@ -104,7 +104,7 @@ void HttpUploader::send()
         mPendingReply = mNetworkAccessManager->post(request, mUploadDevice);
 
         // Update state & progress:
-        mState = Loading;
+        setState(Loading);
         setProgress(0.);
 
         // Connect:
@@ -141,7 +141,7 @@ void HttpUploader::sendFile(const QString& fileName)
         mPendingReply = mNetworkAccessManager->post(request, mUploadDevice);
 
         // Loading:
-        mState = Loading;
+        setState(Loading);
 
         // Reset progress:
         setProgress(0.);

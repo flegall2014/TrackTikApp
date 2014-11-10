@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QQuickView>
 #include "iservice.h"
+#include <QQuickItem>
 class Session;
 class Setting;
 class DataMgr;
@@ -31,6 +32,12 @@ public:
     inline Session *getSession() const
     {
         return mSession;
+    }
+
+    // Get root object:
+    inline QObject *getRootObject() const
+    {
+        return mView.rootObject();
     }
 
 private:

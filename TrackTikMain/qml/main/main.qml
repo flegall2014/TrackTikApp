@@ -184,6 +184,32 @@ Item {
         id: errorMgr
     }
 
+    // Busy indicator:
+    BusyIndicator {
+        id: indicator
+        z: 1000
+        width: parent.width/10
+        height: parent.height/10
+        anchors.centerIn: parent
+        running: false
+        visible: false
+    }
+
+    // Show busy indicator:
+    function showBusyIndicator(busy)
+    {
+        if (busy)
+        {
+            indicator.visible = true
+            indicator.running = true
+        }
+        else
+        {
+            indicator.visible = false
+            indicator.running = false
+        }
+    }
+
     // Initial state:
     Component.onCompleted: {
         var test = setting.get("setup_done")

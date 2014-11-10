@@ -19,7 +19,7 @@ Rectangle {
 
         // User status:
         UserStatus {
-            id: userSection
+            id: userStatus
             width: parent.width
         }
 
@@ -84,4 +84,14 @@ Rectangle {
             }
         }
     }
+
+    // Signed in changed:
+    function onSignedInChanged()
+    {
+        userStatus.userPicture = session.get("user_picture")
+        userStatus.userName = session.get("user_name")
+    }
+
+    // Listen to signed in notification:
+    Component.onCompleted: application.signedInChanged.connect(onSignedInChanged)
 }

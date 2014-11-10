@@ -11,6 +11,7 @@ class CAPIConnection : public QObject
     Q_OBJECT
     Q_PROPERTY(CAPIHandler *handler READ handler WRITE setHandler NOTIFY handlerChanged)
     Q_PROPERTY(QString apiCall READ apiCall WRITE setApiCall NOTIFY apiCallChanged)
+    Q_PROPERTY(double busy READ busy NOTIFY busyChanged)
 
 public:
     // Constructor:
@@ -55,6 +56,19 @@ private:
         emit apiCallChanged();
     }
 
+    // Get busy state:
+    inline bool busy() const
+    {
+        return mBusy;
+    }
+
+    // Set busy state:
+    inline void setBusy(bool busy)
+    {
+        mBusy = busy;
+        emit busyChanged();
+    }
+
     // Setup connections:
     void setupConnections();
 
@@ -74,6 +88,9 @@ private:
     // API call:
     QString mAPICall;
 
+    // Busy state:
+    bool mBusy;
+
 signals:
     void handlerChanged();
     void apiCallChanged();
@@ -81,6 +98,8 @@ signals:
     void progressChanged(double progress);
     void stateChanged();
     void errorTypeChanged();
+
+    void busyChanged();
 
 private slots:
     void onProgressChanged();

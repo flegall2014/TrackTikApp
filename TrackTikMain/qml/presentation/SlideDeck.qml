@@ -24,39 +24,6 @@ Rectangle {
         anchors.top: parent.top
     }
 
-    /*
-    // The Stack library
-    ListModel {
-        id: stackList
-
-        // Load a page
-        function load(page, params) {
-
-            // Insert the data
-            insert(count, {source:page, data:params});
-            viewStack.positionViewAtEnd();
-            viewStack.forceLayout();
-
-            // current view which will be parent of list
-            var view = viewStack.currentItem;
-            // load the QML file
-            var component = Qt.createComponent(page);
-            if(component.status != Component.Ready){
-                console.log(component.errorString())
-            }
-            // create an instance
-            var rect = component.createObject(view,{});
-            rect.anchors.fill = view;
-        }
-
-        // Load a page at the beginning of the stack. This will delete the stack
-        function loadParent(page, params) {
-            clear();
-            load(page, params);
-        }
-    }
-    */
-
     // Presentation:
     Presentation {
         id: deck
@@ -79,12 +46,6 @@ Rectangle {
         Rectangle {
             anchors.fill: parent
             color: settings.presentationBkgColor
-            /*
-            gradient: Gradient {
-                GradientStop { position: 0; color: "lightsteelblue" }
-                GradientStop { position: 1; color: "black" }
-            }
-            */
         }
 
         // Form builder:

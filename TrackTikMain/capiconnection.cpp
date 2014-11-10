@@ -11,7 +11,7 @@
 // Constructor:
 CAPIConnection::CAPIConnection(QObject *parent) :
     QObject(parent), mSystem(TrackTik::instance()->getSystem()), mHandler(0),
-    mAPICall("")
+    mAPICall(""), mBusy(false)
 {
     mHttpUploader = new HttpUploader(this);
     setupConnections();
@@ -80,6 +80,9 @@ void CAPIConnection::onStateChanged()
     if (!mHandler)
         return;
 
+    if (mHttpUploader->state() == HttpUploader::Loading)
+        setBusy(true);
+    else
     // HTTP loader done:
     if (mHttpUploader->state() == HttpUploader::Done)
     {
@@ -101,7 +104,9 @@ void CAPIConnection::onStateChanged()
                     mHandler->onSuccess(jsonString);
             }
         }
+        setBusy(false);
     }
+    else setBusy(false);
 }
 
 // Network error changed:
