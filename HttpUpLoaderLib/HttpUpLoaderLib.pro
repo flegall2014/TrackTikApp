@@ -1,5 +1,6 @@
 TEMPLATE = lib
 
+QT -= gui
 QT += qml quick network
 
 DEFINES += HTTPUPLOADERLIB_LIBRARY
