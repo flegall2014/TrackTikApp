@@ -17,9 +17,9 @@ class HTTPUPLOADERLIBSHARED_EXPORT HttpPostField : public QObject
 public:
     // Defines type of the HTTP POST field
     enum FieldType {
-        FieldInvalid,       //< Invalid field - not initialized
-        FieldValue,         //< Field is string
-        FieldFile           //< Filed is file
+        FieldInvalid,       // Invalid field - not initialized
+        FieldValue,         // Field is string
+        FieldFile           // Filed is file
     };
 
     // Constructor:
@@ -41,7 +41,7 @@ public:
     virtual int contentLength() = 0;
 
     // Create QIODevice object which returns data to be uploaded
-    virtual QIODevice * createIoDevice(QObject * parent = 0) = 0;
+    virtual QIODevice *createIoDevice(QObject * parent = 0) = 0;
 
     // Check if the field is valid (e.g. file exists)
     virtual bool validateField() = 0;
