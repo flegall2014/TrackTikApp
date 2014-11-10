@@ -58,6 +58,8 @@ Item {
                 // Get string response:
                 var response = signinHandler.response()
 
+                console.log(response)
+
                 // Parse response:
                 var jsonObject = JSON.parse(response)
 

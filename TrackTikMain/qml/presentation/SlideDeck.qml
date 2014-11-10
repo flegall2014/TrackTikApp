@@ -7,9 +7,40 @@ Rectangle {
     property alias mouseAreaEnabled: deck.mouseAreaEnabled
     color: settings.presentationBkgColor
 
+    // Current slide index:
+    property alias currentSlide: deck.currentSlide
+
     // Small view mode:
     readonly property int viewModeSmallWidth: 750*display.scale
     property bool viewModeSmall: application.width < viewModeSmallWidth
+    onViewModeSmallChanged: leftMenu.state = viewModeSmall ? "" : "opened"
+
+    // Open/Close menu:
+    function updateMenu(open)
+    {
+        if (leftMenu.state === "opened")
+            leftMenu.state = ""
+        else
+            leftMenu.state = "opened"
+    }
+
+    // Go to previous slide:
+    function goToPreviousSlide()
+    {
+        deck.goToPreviousSlide()
+    }
+
+    // Go to next slide:
+    function goToNextSlide()
+    {
+        deck.goToNextSlide()
+    }
+
+    // Go to specific slide:
+    function goToSlide(slideIndex)
+    {
+        deck.goToSlide(slideIndex)
+    }
 
     // Settings:
     Settings {
@@ -153,8 +184,17 @@ Rectangle {
         id: leftMenu
         anchors.top: header.bottom
         anchors.bottom: parent.bottom
-        x: viewModeSmall ? -width : 0
         width: 220*display.scale
+        x: -width
+        states: [
+            State {
+                name: "opened"
+                PropertyChanges {
+                    target: leftMenu
+                    x: 0
+                }
+            }
+        ]
     }
 
     // Footer:

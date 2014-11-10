@@ -71,10 +71,10 @@
         <file>qml/main/UserStatus.qml</file>
         <file>qml/main/Footer.qml</file>
         <file>qml/main/Header.qml</file>
-        <file>qml/images/elipse.png</file>
-        <file>qml/images/icon-left-arrow.png</file>
-        <file>qml/images/wheel.png</file>
-        <file>qml/images/wheel-touch.png</file>
+        <file>qml/images/ico-elipse.png</file>
+        <file>qml/images/ico-leftarrow.png</file>
+        <file>qml/images/ico-wheel.png</file>
+        <file>qml/images/ico-wheeltouch.png</file>
         <file>qml/presentation/Clock.qml</file>
         <file>qml/presentation/Presentation.qml</file>
         <file>qml/presentation/Slide.qml</file>
@@ -105,5 +105,6 @@
         <file>qml/main/ErrorMgr.qml</file>
         <file>qml/dialogs/ErrorDialog.qml</file>
         <file>qml/styles/ErrorDialogStyle.qml</file>
+        <file>qml/images/ico-tools.png</file>
     </qresource>
 </RCC>

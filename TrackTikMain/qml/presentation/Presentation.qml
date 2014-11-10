@@ -14,6 +14,8 @@ Item {
     property string codeFontFamily: "Courier New"
     property alias mouseAreaEnabled: mouseArea.enabled
 
+    onCurrentSlideChanged: console.log(currentSlide)
+
     // Private API:
     property bool _faded: false
     property int _userNum;
@@ -146,7 +148,8 @@ Item {
             else
                 goToNextSlide()
         }
-        onPressAndHold: goToPreviousSlide(); //A back mechanism for touch only devices
+        // A back mechanism for touch only devices:
+        onPressAndHold: goToPreviousSlide()
     }
 
     Window {

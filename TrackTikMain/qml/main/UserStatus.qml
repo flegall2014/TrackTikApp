@@ -47,7 +47,7 @@ Rectangle {
                     anchors.fill: parent;
                     hoverEnabled: true
                     //onHoveredChanged: userStatus.color = "red"
-                    onClicked: application.state = ""
+                    onClicked: application.signedIn = false
                 }
             }
         }
