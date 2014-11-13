@@ -88,8 +88,12 @@ Rectangle {
     // Signed in changed:
     function onSignedInChanged()
     {
-        userStatus.userPicture = session.get("user_picture")
-        userStatus.userName = session.get("user_name")
+        var userPicture = session.get("user_picture")
+        if (userPicture)
+            userStatus.userPicture = userPicture
+        var userName = session.get("user_name")
+        if (userName)
+            userStatus.userName = userName
     }
 
     // Listen to signed in notification:

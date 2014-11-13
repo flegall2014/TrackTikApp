@@ -23,8 +23,8 @@ public:
     Q_INVOKABLE bool remove(const QString &key);
 
 protected:
-    // Type:
-    QString mType;
+    // Type (session/setting):
+    QString mQueryType;
 };
 
 #endif /* SETTING_H */

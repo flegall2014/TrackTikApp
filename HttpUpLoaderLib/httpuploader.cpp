@@ -68,7 +68,7 @@ void HttpUploader::open(const QUrl &url)
     {
         setUrl(url);
         mState = Opened;
-    } else qDebug() << "HTTPUPLOADER BUSY LOADING";
+    }
 }
 
 // Send:

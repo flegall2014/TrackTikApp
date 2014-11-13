@@ -51,8 +51,7 @@ QString JSON::serialize(const QVariant& value) const
 {
     QScriptValue arg = d->createValue(value);
     QScriptValue result = d->streamFn.call(QScriptValue(), QScriptValueList() << arg);
-    QString resultString = result.toString();
-    return resultString;
+    return result.toString();
 }
 
 QScriptValue JSONData::createValue(const QVariant& value)
