@@ -57,21 +57,30 @@ Item {
             onSuccess: {
                 // Get string response:
                 var response = signinHandler.response()
+                console.log(response)
 
                 // Parse response:
                 var jsonObject = JSON.parse(response)
 
+
+
+                // TO DO:
+                // for each key in json.attributes, prend la cle
+                // for each jsonObject.attributes.keyname
+                // Looper -> du coup on recupere feature
+
                 // Read api:
-                for (var key in jsonObject.attributes.api)
-                    session.set("api_"+key, jsonObject.attributes.api[key])
+                for (var key in jsonObject.attributes)
+                {
+                    var test = jsonObject.attributes[key]
 
-                // Read user:
-                for (key in jsonObject.attributes.user)
-                    session.set("user_"+key, jsonObject.attributes.user[key])
-
-                // Read payload:
-                for (key in jsonObject.attributes.payload)
-                    session.set("payload_"+key, jsonObject.attributes.payload[key])
+                    // Read api:
+                    for (var subKey in test)
+                    {
+                        var value = jsonObject.attributes[key][subKey]
+                        session.set(key+"_"+subKey, value)
+                    }
+                }
 
                 // Signed in:
                 signedIn = true
