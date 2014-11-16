@@ -62,13 +62,6 @@ Item {
                 // Parse response:
                 var jsonObject = JSON.parse(response)
 
-
-
-                // TO DO:
-                // for each key in json.attributes, prend la cle
-                // for each jsonObject.attributes.keyname
-                // Looper -> du coup on recupere feature
-
                 // Read api:
                 for (var key in jsonObject.attributes)
                 {

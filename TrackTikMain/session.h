@@ -25,6 +25,9 @@ public:
     // Clear all:
     Q_INVOKABLE void clearAll();
 
+    // Does session have feature?
+    Q_INVOKABLE bool hasFeature(const QString &featureName) const;
+
 protected:
     // Type (Setting/Session):
     QString mQueryType;

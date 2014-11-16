@@ -35,6 +35,9 @@ public:
     // Clear all:
     void clearAll(const QString &queryType);
 
+    // Return true if database has key:
+    bool hasKey(const QString &queryType, const QString &keyName) const;
+
 private:
     // Use instance() method:
     Database();

@@ -306,3 +306,15 @@ void Database::clearAll(const QString &queryType)
     QString queryStr = QString("DELETE FROM key_value WHERE querytype='%1'").arg(queryType);
     execQuery(queryStr, query);
 }
+
+// Return true if database contains key:
+bool Database::hasKey(const QString &queryType, const QString &keyName) const
+{
+    QSqlQuery query;
+    QString queryStr = QString("SELECT * FROM key_value WHERE querytype='%1' AND key='%2'").arg(queryType).arg(Utils::getKey(keyName));
+    if (!execQuery(queryStr, query))
+        return false;
+
+    // Return result:
+    return query.next();
+}
